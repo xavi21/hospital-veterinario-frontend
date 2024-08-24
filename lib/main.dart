@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paraiso_canino/common/theme/app_theme.dart';
-import 'package:paraiso_canino/home/home_page.dart';
-import 'package:paraiso_canino/resources/constants.dart';
+import 'package:paraiso_canino/login/login_page.dart';
 
 void main() {
   runApp(const DogParadiseWeb());
@@ -15,9 +14,9 @@ class DogParadiseWeb extends StatelessWidget {
     return MaterialApp(
       title: 'Paraíso Canino',
       theme: customThemeData(),
-      home: const HomePage(),
+      home: const LoginPage(),
       debugShowCheckedModeBanner: false,
-      supportedLocales: supportedLocales,
+      // supportedLocales: supportedLocales,
     );
   }
 }
