@@ -12,6 +12,7 @@ dependencies:
 
 
   cupertino_icons: ^1.0.8
+  easy_sidemenu: ^0.6.0
   flutter_svg: ^2.0.10+1
   flutter_bloc: ^8.1.6
   google_fonts: ^6.2.1
@@ -45,4 +46,3 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-  
