@@ -1,2 +1,2 @@
-//TODO Agregar url para consumo de servicios
-const String baseUrl = '';
+const String baseUrl = 'http://paraisocaninogt.com/';
+const String authPath = 'api/auth/signin';
