@@ -6,11 +6,13 @@ final class LoginInitial extends LoginState {}
 
 final class LoginInProgress extends LoginState {}
 
-final class LoginSuccess extends LoginState {
-  final LoginResponse loginResponse;
+final class LoginSuccess extends LoginState {}
 
-  LoginSuccess({
-    required this.loginResponse,
+final class LoginReminderMailSuccess extends LoginState {
+  final String reminderMail;
+
+  LoginReminderMailSuccess({
+    required this.reminderMail,
   });
 }
 

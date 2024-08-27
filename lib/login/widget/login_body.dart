@@ -24,7 +24,7 @@ class _LoginBodyState extends State<LoginBody> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
 
-  bool _rememberUser = false;
+  bool _rememberEmail = false;
   late LoginBloc _loginBloc;
 
   @override
@@ -44,20 +44,38 @@ class _LoginBodyState extends State<LoginBody> {
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, BaseState>(
       listener: (context, state) {
-        if (state is LoginSuccess) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => HomePage(),
-            ),
-          );
-        }
-        if (state is LoginError) {
-          CustomStateDialog.showAlertDialog(
-            context,
-            title: 'Autenticación erronea',
-            description: state.error,
-            isError: true,
-          );
+        switch (state.runtimeType) {
+          case const (LoginReminderMailSuccess):
+            final loadedState = state as LoginReminderMailSuccess;
+            setState(() {
+              _usernameController.text = loadedState.reminderMail;
+              _rememberEmail = true;
+            });
+            break;
+          case const (LoginSuccess):
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            );
+            break;
+          case const (LoginError):
+            final stateError = state as LoginError;
+            CustomStateDialog.showAlertDialog(
+              context,
+              title: 'Autenticación incorecta',
+              description: stateError.error,
+              isError: true,
+            );
+            break;
+          case const (ServerClientError):
+            CustomStateDialog.showAlertDialog(
+              context,
+              title: 'Error',
+              description: 'En este momento no podemos atender tu solicitud.',
+              isError: true,
+            );
+            break;
         }
       },
       child: Stack(
@@ -187,7 +205,7 @@ class _LoginBodyState extends State<LoginBody> {
               isRequired: true,
               isPassword: true,
               validator: (String? value) => validatePassword(value),
-              // onFieldSubmitted: (value) => _handleLogin(),
+              onFieldSubmitted: (value) => _handleLogin(),
             ),
             const SizedBox(
               height: 20.0,
@@ -197,9 +215,9 @@ class _LoginBodyState extends State<LoginBody> {
                 'Recordar usuario',
                 style: TextStyle(color: black),
               ),
-              value: _rememberUser,
+              value: _rememberEmail,
               onChanged: (bool? value) => setState(
-                () => _rememberUser = value ?? false,
+                () => _rememberEmail = value ?? false,
               ),
               checkColor: white,
               controlAffinity: ListTileControlAffinity.leading,
@@ -230,6 +248,7 @@ class _LoginBodyState extends State<LoginBody> {
         LoginWithEmailPassword(
           codeEmail: _usernameController.text.trim(),
           password: _passwordController.text,
+          rememberEmail: _rememberEmail,
         ),
       );
     }

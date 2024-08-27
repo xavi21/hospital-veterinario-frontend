@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 const String imagePath = 'assets/images/';
 const String iconPath = 'assets/icons/';
 const String animationPath = 'assets/animations/';
-const String responseCode = 'code';
+const String responseMessage = 'message';
+const String responseCode = 'status';
 const String emptyString = '';
 const List<Locale> supportedLocales = [
   Locale('es'),

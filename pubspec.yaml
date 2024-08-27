@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-
+  flutter_secure_storage: ^9.2.2
   cupertino_icons: ^1.0.8
   easy_sidemenu: ^0.6.0
   flutter_svg: ^2.0.10+1
