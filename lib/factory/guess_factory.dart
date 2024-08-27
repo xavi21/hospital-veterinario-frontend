@@ -1,13 +1,14 @@
 import 'package:dio/dio.dart';
-import 'package:paraiso_canino/factory/headers_interceptor.dart';
 import 'package:paraiso_canino/resources/api_constants.dart';
 
-final class ClientFactory {
+import 'headers_interceptor.dart';
+
+class GuessFactory {
   static Dio buildClient() {
     final Dio dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
-        validateStatus: (int? status) => status! <= 201,
+        validateStatus: (int? status) => status! <= 200,
       ),
     );
 
@@ -16,7 +17,9 @@ final class ClientFactory {
         LogInterceptor(),
       )
       ..add(
-        HeadersInterceptor(),
+        HeadersInterceptor(
+          isGuess: true,
+        ),
       );
     return dio;
   }
