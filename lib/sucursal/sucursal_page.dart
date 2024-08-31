@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paraiso_canino/sucursal/bloc/sucursal_bloc.dart';
 import 'package:paraiso_canino/sucursal/widget/sucursal_body.dart';
 
 class SucursalPage extends StatelessWidget {
@@ -6,6 +8,9 @@ class SucursalPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SucursalBody();
+    return BlocProvider<SucursalBloc>(
+      create: (context) => SucursalBloc(),
+      child: const SucursalBody(),
+    );
   }
 }

@@ -8,15 +8,15 @@ class Loader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        color: white.withOpacity(
-          0.6,
-        ),
-        alignment: Alignment.center,
-        child: Lottie.asset(
-          '${animationPath}loader.json',
-        ),
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: white.withOpacity(
+        0.6,
+      ),
+      alignment: Alignment.center,
+      child: Lottie.asset(
+        '${animationPath}loader.json',
       ),
     );
   }

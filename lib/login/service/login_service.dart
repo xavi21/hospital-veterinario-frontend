@@ -1,22 +1,22 @@
 import 'package:dio/dio.dart';
-import 'package:paraiso_canino/factory/client_factory.dart';
+import 'package:paraiso_canino/factory/guess_factory.dart';
 import 'package:paraiso_canino/login/model/login_response.dart';
 import 'package:paraiso_canino/resources/api_constants.dart';
 
 class LoginService {
-  Dio client;
+  Dio guess;
 
-  LoginService() : client = ClientFactory.buildClient();
+  LoginService() : guess = GuessFactory.buildClient();
 
   LoginService.withClient(
-    this.client,
+    this.guess,
   );
 
   Future<LoginResponse> authUser({
     required String username,
     required String password,
   }) async {
-    final response = await client.post(
+    final response = await guess.post(
       authPath,
       data: {
         'idusuario': username,
