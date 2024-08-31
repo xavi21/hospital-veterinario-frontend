@@ -22,8 +22,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginOnLoad event,
     Emitter<BaseState> emit,
   ) async {
-    final String savedMail = await _userRepository.getReminderEmail();
-    if (savedMail.isNotEmpty) {
+    final bool isRememberMail = await _userRepository.rememberMailChecked();
+    if (isRememberMail) {
+      final String savedMail = await _userRepository.getReminderEmail();
       emit(
         LoginReminderMailSuccess(
           reminderMail: savedMail,
@@ -49,8 +50,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       );
 
       if (event.rememberEmail) {
-        _userRepository.rememberEmail(email: event.codeEmail);
+        _userRepository.saveRemeberMailCheck(isCkecked: true);
       }
+
+      _userRepository.rememberEmail(
+        email: event.codeEmail,
+      );
 
       _userRepository.saveBearerToken(
         newToken: resp.accessToken,

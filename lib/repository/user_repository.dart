@@ -34,6 +34,18 @@ class UserRepository {
     );
   }
 
+  Future<void> saveRemeberMailCheck({required bool isCkecked}) async {
+    await storage.write(
+      key: rememberMail,
+      value: '$isCkecked',
+    );
+  }
+
+  Future<bool> rememberMailChecked() async {
+    String checkStatus = await storage.read(key: rememberMail) ?? 'false';
+    return checkStatus == 'true';
+  }
+
   Future<bool> isSession() async {
     return (await getBearerToken()).isEmpty;
   }

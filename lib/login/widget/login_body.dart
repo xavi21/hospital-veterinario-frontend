@@ -53,7 +53,7 @@ class _LoginBodyState extends State<LoginBody> {
             });
             break;
           case const (LoginSuccess):
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => const HomePage(),
               ),
