@@ -9,6 +9,7 @@ class CustomTable extends StatelessWidget {
   final List<Widget> rows;
   final Function()? onTapSearchButton;
   final Function()? onChangeSearchButton;
+  final Function()? onTapAddButton;
   final String pageTitle;
 
   const CustomTable({
@@ -18,6 +19,7 @@ class CustomTable extends StatelessWidget {
     required this.rows,
     required this.onTapSearchButton,
     this.onChangeSearchButton,
+    required this.onTapAddButton,
     required this.pageTitle,
   });
 
@@ -84,7 +86,7 @@ class CustomTable extends StatelessWidget {
                     ),
                     const Spacer(),
                     CustomButton(
-                      onPressed: () {},
+                      onPressed: () => onTapAddButton!(),
                       text: 'Agregar',
                     ),
                   ],

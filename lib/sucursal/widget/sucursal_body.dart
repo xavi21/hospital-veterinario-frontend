@@ -102,6 +102,7 @@ class _SucursalBodyState extends State<SucursalBody> {
               pageTitle: 'Sucursales',
               searchController: searchOffices,
               onTapSearchButton: () => _getOfficeList(),
+              onTapAddButton: () {},
               headers: const [
                 'iD',
                 'Nombre sucursal',
