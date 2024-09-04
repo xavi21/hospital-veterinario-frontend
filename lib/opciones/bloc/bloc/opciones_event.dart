@@ -8,3 +8,15 @@ abstract class OpcionesEvent extends Equatable {
 }
 
 final class OptionsShown extends OpcionesEvent {}
+
+final class OptionAddNew extends OpcionesEvent {
+  final String name;
+  final int orderMenu;
+  final String page;
+
+  const OptionAddNew({
+    required this.name,
+    required this.orderMenu,
+    required this.page,
+  });
+}

@@ -22,4 +22,19 @@ class OpcionesService {
       ),
     );
   }
+
+  Future<Response<dynamic>> addNewOption({
+    required String name,
+    required int orderMenu,
+    required String pagina,
+  }) async {
+    return await client.post(
+      saveOptionPath,
+      data: {
+        "name": name,
+        "ordenmenu": orderMenu,
+        "pagina": "/$pagina",
+      },
+    );
+  }
 }

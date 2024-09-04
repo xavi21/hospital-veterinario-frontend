@@ -13,6 +13,7 @@ part 'opciones_state.dart';
 class OpcionesBloc extends Bloc<OpcionesEvent, OpcionesState> {
   OpcionesBloc() : super(OpcionesInitial()) {
     on<OptionsShown>(getOptionList);
+    on<OptionAddNew>(addNewOption);
   }
 
   final OpcionesService service = OpcionesService();
@@ -29,6 +30,41 @@ class OpcionesBloc extends Bloc<OpcionesEvent, OpcionesState> {
       emit(
         OpcionesListSuccess(
           optionList: response,
+        ),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          OpcionesServiceError(
+            message: error.response!.data![responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> addNewOption(
+    OptionAddNew event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      OpcionesInProgress(),
+    );
+    try {
+      final response = await service.addNewOption(
+        name: event.name,
+        orderMenu: event.orderMenu,
+        pagina: event.page,
+      );
+      emit(
+        OpcionesAddNewSuccess(
+          message: response.data['message'],
         ),
       );
     } on DioException catch (error) {

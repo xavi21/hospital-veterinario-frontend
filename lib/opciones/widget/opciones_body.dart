@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
+import 'package:paraiso_canino/common/button/custom_button.dart';
+import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
 import 'package:paraiso_canino/common/enum/action_emum.dart';
+import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
 import 'package:paraiso_canino/opciones/bloc/bloc/opciones_bloc.dart';
@@ -16,7 +19,12 @@ class OpcionesBody extends StatefulWidget {
 }
 
 class _OpcionesBodyState extends State<OpcionesBody> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final TextEditingController _searchOptions = TextEditingController();
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _orderMenu = TextEditingController();
+  final TextEditingController _pagina = TextEditingController();
   late List<OpcionesListModel> optionList;
 
   @override
@@ -29,13 +37,39 @@ class _OpcionesBodyState extends State<OpcionesBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: fillInputSelect,
+      drawer: _newOptionForm(),
       body: BlocListener<OpcionesBloc, BaseState>(
         listener: (context, state) {
           if (state is OpcionesListSuccess) {
             setState(() {
               optionList = state.optionList;
             });
+          }
+          if (state is OpcionesAddNewSuccess) {
+            _getOptionList();
+            CustomStateDialog.showAlertDialog(
+              context,
+              title: 'Opcion creada',
+              description: state.message,
+            );
+          }
+          if (state is OpcionesServiceError) {
+            CustomStateDialog.showAlertDialog(
+              context,
+              title: 'Error',
+              description: state.message,
+              isWarning: true,
+            );
+          }
+          if (state is ServerClientError) {
+            CustomStateDialog.showAlertDialog(
+              context,
+              title: 'Error',
+              description: 'En este momento no podemos atender tu solicitud.',
+              isError: true,
+            );
           }
         },
         child: Stack(
@@ -55,6 +89,7 @@ class _OpcionesBodyState extends State<OpcionesBody> {
                       .toList();
                 });
               },
+              onTapAddButton: () => _scaffoldKey.currentState!.openDrawer(),
               headers: const [
                 'Opcion ID',
                 'Nombre',
@@ -111,13 +146,11 @@ class _OpcionesBodyState extends State<OpcionesBody> {
                         ),
                         PopupMenuButton(
                           color: white,
-                          onSelected: (value) {},
+                          onSelected: (value) {
+                            print('$value');
+                          },
                           itemBuilder: (context) {
                             return const [
-                              PopupMenuItem(
-                                value: TableRowActions.see,
-                                child: Text('Ver'),
-                              ),
                               PopupMenuItem(
                                 value: TableRowActions.edit,
                                 child: Text('Editar'),
@@ -149,9 +182,70 @@ class _OpcionesBodyState extends State<OpcionesBody> {
     );
   }
 
+  Widget _newOptionForm() {
+    return Drawer(
+      backgroundColor: fillInputSelect,
+      child: Form(
+        key: _form,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Nueva Opción',
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+              const SizedBox(height: 20.0),
+              CustomInput(
+                labelText: 'Nombre',
+                controller: _name,
+                isRequired: true,
+              ),
+              const SizedBox(height: 12.0),
+              CustomInput(
+                labelText: 'Orden',
+                controller: _orderMenu,
+                textInputType: TextInputType.number,
+                isRequired: true,
+              ),
+              const SizedBox(height: 12.0),
+              CustomInput(
+                labelText: 'Página',
+                controller: _pagina,
+                isRequired: true,
+              ),
+              const SizedBox(height: 12.0),
+              CustomButton(
+                onPressed: () {
+                  if (_form.currentState!.validate()) {
+                    Navigator.pop(context);
+                    _saveNewOption();
+                  }
+                },
+                text: 'Guardar',
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _getOptionList() {
     context.read<OpcionesBloc>().add(
           OptionsShown(),
+        );
+  }
+
+  void _saveNewOption() {
+    context.read<OpcionesBloc>().add(
+          OptionAddNew(
+            name: _name.text,
+            orderMenu: int.parse(_orderMenu.text),
+            page: _pagina.text,
+          ),
         );
   }
 }
