@@ -14,13 +14,11 @@ final class OpcionesListSuccess extends OpcionesState {
   });
 }
 
-final class OpcionesAddNewSuccess extends OpcionesState {
-  final String message;
+final class OpcionesAddNewSuccess extends OpcionesState {}
 
-  OpcionesAddNewSuccess({
-    required this.message,
-  });
-}
+final class OpcionesEditedSuccess extends OpcionesState {}
+
+final class OpcionesDeletedSuccess extends OpcionesState {}
 
 final class OpcionesServiceError extends OpcionesState {
   final String message;

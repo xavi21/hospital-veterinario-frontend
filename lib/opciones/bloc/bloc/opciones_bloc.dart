@@ -13,7 +13,9 @@ part 'opciones_state.dart';
 class OpcionesBloc extends Bloc<OpcionesEvent, OpcionesState> {
   OpcionesBloc() : super(OpcionesInitial()) {
     on<OptionsShown>(getOptionList);
-    on<OptionAddNew>(addNewOption);
+    on<OptionCreated>(createOption);
+    on<OptionEdited>(updateOption);
+    on<OptionDeleted>(deleteOption);
   }
 
   final OpcionesService service = OpcionesService();
@@ -49,23 +51,86 @@ class OpcionesBloc extends Bloc<OpcionesEvent, OpcionesState> {
     }
   }
 
-  Future<void> addNewOption(
-    OptionAddNew event,
+  Future<void> createOption(
+    OptionCreated event,
     Emitter<BaseState> emit,
   ) async {
     emit(
       OpcionesInProgress(),
     );
     try {
-      final response = await service.addNewOption(
+      await service.addNewOption(
         name: event.name,
         orderMenu: event.orderMenu,
         pagina: event.page,
       );
       emit(
-        OpcionesAddNewSuccess(
-          message: response.data['message'],
-        ),
+        OpcionesAddNewSuccess(),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          OpcionesServiceError(
+            message: error.response!.data![responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> updateOption(
+    OptionEdited event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      OpcionesInProgress(),
+    );
+    try {
+      await service.updateOption(
+        idOpcion: event.id,
+        name: event.name,
+        orderMenu: event.orderMenu,
+        pagina: event.page,
+      );
+      emit(
+        OpcionesEditedSuccess(),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          OpcionesServiceError(
+            message: error.response!.data![responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> deleteOption(
+    OptionDeleted event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      OpcionesInProgress(),
+    );
+    try {
+      await service.deleteOption(
+        id: event.id,
+      );
+      emit(
+        OpcionesDeletedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||

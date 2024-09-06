@@ -21,14 +21,19 @@ class OpcionesBody extends StatefulWidget {
 class _OpcionesBodyState extends State<OpcionesBody> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
-  final TextEditingController _searchOptions = TextEditingController();
   final TextEditingController _name = TextEditingController();
   final TextEditingController _orderMenu = TextEditingController();
   final TextEditingController _pagina = TextEditingController();
+  final TextEditingController _searchOptions = TextEditingController();
+
   late List<OpcionesListModel> optionList;
+
+  late bool _isEdit;
+  late int _opcionlId;
 
   @override
   void initState() {
+    _isEdit = false;
     optionList = [];
     _getOptionList();
     super.initState();
@@ -39,7 +44,7 @@ class _OpcionesBodyState extends State<OpcionesBody> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: fillInputSelect,
-      drawer: _newOptionForm(),
+      endDrawer: _newOptionForm(),
       body: BlocListener<OpcionesBloc, BaseState>(
         listener: (context, state) {
           if (state is OpcionesListSuccess) {
@@ -51,8 +56,24 @@ class _OpcionesBodyState extends State<OpcionesBody> {
             _getOptionList();
             CustomStateDialog.showAlertDialog(
               context,
-              title: 'Opcion creada',
-              description: state.message,
+              title: 'Opciones',
+              description: 'Opción creada correctamente',
+            );
+          }
+          if (state is OpcionesEditedSuccess) {
+            _getOptionList();
+            CustomStateDialog.showAlertDialog(
+              context,
+              title: 'Opciones',
+              description: 'Opción editada correctamente',
+            );
+          }
+          if (state is OpcionesDeletedSuccess) {
+            _getOptionList();
+            CustomStateDialog.showAlertDialog(
+              context,
+              title: 'Opciones',
+              description: 'Opción eliminada correctamente',
             );
           }
           if (state is OpcionesServiceError) {
@@ -78,18 +99,16 @@ class _OpcionesBodyState extends State<OpcionesBody> {
               pageTitle: 'Opciones',
               searchController: _searchOptions,
               onChangeSearchButton: () => _getOptionList(),
-              onTapSearchButton: () {
+              onTapSearchButton: () => _filterTable(),
+              onTapAddButton: () {
                 setState(() {
-                  optionList = optionList
-                      .where(
-                        (element) => element.name.toLowerCase().contains(
-                              _searchOptions.text.toLowerCase(),
-                            ),
-                      )
-                      .toList();
+                  _isEdit = false;
+                  _name.clear();
+                  _orderMenu.clear();
+                  _pagina.clear();
                 });
+                _scaffoldKey.currentState!.openEndDrawer();
               },
-              onTapAddButton: () => _scaffoldKey.currentState!.openDrawer(),
               headers: const [
                 'Opcion ID',
                 'Nombre',
@@ -147,7 +166,21 @@ class _OpcionesBodyState extends State<OpcionesBody> {
                         PopupMenuButton(
                           color: white,
                           onSelected: (value) {
-                            print('$value');
+                            if (value == TableRowActions.delete) {
+                              _deleteOption(
+                                id: option.idopcion,
+                              );
+                            }
+                            if (value == TableRowActions.edit) {
+                              setState(() {
+                                _isEdit = true;
+                                _name.text = option.name;
+                                _orderMenu.text = option.ordenmenu.toString();
+                                _pagina.text = option.pagina;
+                                _opcionlId = option.idopcion;
+                              });
+                              _scaffoldKey.currentState!.openEndDrawer();
+                            }
                           },
                           itemBuilder: (context) {
                             return const [
@@ -194,7 +227,7 @@ class _OpcionesBodyState extends State<OpcionesBody> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Nueva Opción',
+                _isEdit ? 'Editar Opción' : 'Nueva Opción',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 20.0),
@@ -221,16 +254,32 @@ class _OpcionesBodyState extends State<OpcionesBody> {
                 onPressed: () {
                   if (_form.currentState!.validate()) {
                     Navigator.pop(context);
-                    _saveNewOption();
+                    if (_isEdit) {
+                      _editOption(id: _opcionlId);
+                    } else {
+                      _saveNewOption();
+                    }
                   }
                 },
-                text: 'Guardar',
+                text: _isEdit ? 'Editar' : 'Guardar',
               )
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _filterTable() {
+    setState(() {
+      optionList = optionList
+          .where(
+            (element) => element.name.toLowerCase().contains(
+                  _searchOptions.text.toLowerCase(),
+                ),
+          )
+          .toList();
+    });
   }
 
   void _getOptionList() {
@@ -241,10 +290,29 @@ class _OpcionesBodyState extends State<OpcionesBody> {
 
   void _saveNewOption() {
     context.read<OpcionesBloc>().add(
-          OptionAddNew(
+          OptionCreated(
             name: _name.text,
             orderMenu: int.parse(_orderMenu.text),
             page: _pagina.text,
+          ),
+        );
+  }
+
+  void _editOption({required int id}) {
+    context.read<OpcionesBloc>().add(
+          OptionEdited(
+            id: id,
+            name: _name.text,
+            orderMenu: int.parse(_orderMenu.text),
+            page: _pagina.text,
+          ),
+        );
+  }
+
+  void _deleteOption({required int id}) {
+    context.read<OpcionesBloc>().add(
+          OptionDeleted(
+            id: id,
           ),
         );
   }
