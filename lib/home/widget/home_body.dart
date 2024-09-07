@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:paraiso_canino/common/appbar/custom_appbar.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
 import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
@@ -10,7 +9,7 @@ import 'package:paraiso_canino/home/model/submenu_list.dart';
 import 'package:paraiso_canino/login/model/login_response.dart';
 import 'package:paraiso_canino/resources/colors.dart';
 import 'package:paraiso_canino/resources/constants.dart';
-import 'package:paraiso_canino/sucursal/sucursal_page.dart';
+import 'package:paraiso_canino/routes/routes.dart';
 
 class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
@@ -27,13 +26,13 @@ class _HomeBodyState extends State<HomeBody> {
   late List<SubMenuListModel> submenu;
 
   late LoginResponse profileData;
-  late String _userName;
+  // late String _userName;
 
   @override
   void initState() {
     menu = [];
     submenu = [];
-    _userName = emptyString;
+    // _userName = emptyString;
     _getNavigationMenu();
     super.initState();
   }
@@ -44,7 +43,7 @@ class _HomeBodyState extends State<HomeBody> {
       listener: (context, state) {
         if (state is HomeGetMenuSuccess) {
           setState(() {
-            _userName = state.userEmail;
+            // _userName = state.userEmail;
             submenu = state.subMenu;
             menu = state.menu.map<SideMenuExpansionItem>((menuItem) {
               return SideMenuExpansionItem(
@@ -157,26 +156,13 @@ class _HomeBodyState extends State<HomeBody> {
                     child: PageView(
                       controller: pageController,
                       children: submenu.map<Widget>((page) {
-                        return Column(
-                          children: [
-                            CustomAppBar(userName: _userName),
-                            Builder(
-                              builder: (context) {
-                                if (page.idopcion == 2) {
-                                  return const SucursalPage();
-                                }
-                                return Center(
-                                  child: Text(
-                                    page.opcionNombre,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displayLarge,
-                                  ),
-                                );
-                              },
-                            )
-                          ],
-                        );
+                        return routes[page.opcionNombre.replaceAll(' ', '')] ??
+                            Center(
+                              child: Text(
+                                page.opcionNombre.trim(),
+                                style: Theme.of(context).textTheme.displayLarge,
+                              ),
+                            );
                       }).toList(),
                     ),
                   ),

@@ -14,6 +14,12 @@ final class SucursalSuccess extends SucursalState {
   });
 }
 
+final class SucursalCreatedSuccess extends SucursalState {}
+
+final class SucursalEditedSuccess extends SucursalState {}
+
+final class SucursalDeletedSuccess extends SucursalState {}
+
 final class SucursalError extends SucursalState {
   final String message;
 

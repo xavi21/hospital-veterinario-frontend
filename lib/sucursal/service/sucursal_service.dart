@@ -22,4 +22,43 @@ class SucursalService {
       ),
     );
   }
+
+  Future<Response<dynamic>> createOffice({
+    required String name,
+    required String direction,
+  }) async {
+    return await client.post(
+      createOfficePath,
+      data: {
+        'name': name,
+        'direccion': direction,
+      },
+    );
+  }
+
+  Future<Response<dynamic>> updateOffice({
+    required int id,
+    required String name,
+    required String direction,
+  }) async {
+    return await client.put(
+      editOfficePath,
+      data: {
+        'idsucursal': id,
+        'name': name,
+        'direccion': direction,
+      },
+    );
+  }
+
+  Future<Response<dynamic>> deleteOffice({
+    required int id,
+  }) async {
+    return await client.delete(
+      deleteOfficePath,
+      queryParameters: {
+        'id': id,
+      },
+    );
+  }
 }

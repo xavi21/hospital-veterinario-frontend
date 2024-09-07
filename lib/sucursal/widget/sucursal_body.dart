@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
+import 'package:paraiso_canino/common/button/custom_button.dart';
 import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
+import 'package:paraiso_canino/common/enum/action_emum.dart';
+import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
 import 'package:paraiso_canino/resources/colors.dart';
@@ -16,59 +19,30 @@ class SucursalBody extends StatefulWidget {
 }
 
 class _SucursalBodyState extends State<SucursalBody> {
-  final TextEditingController searchOffices = TextEditingController();
-  List<OfficeListModel> sucursales = [
-    OfficeListModel(
-      fechacreacion: 'fechacreacion',
-      usuariocreacion: 'usuariocreacion',
-      fechamodificacion: 'fechamodificacion',
-      usuariomodificacion: 'usuariomodificacion',
-      idsucursal: 1,
-      name: 'name',
-      direccion: 'direccion',
-      usuario: 'usuario',
-    ),
-    OfficeListModel(
-      fechacreacion: 'fechacreacion',
-      usuariocreacion: 'usuariocreacion',
-      fechamodificacion: 'fechamodificacion',
-      usuariomodificacion: 'usuariomodificacion',
-      idsucursal: 1,
-      name: 'name',
-      direccion: 'direccion',
-      usuario: 'usuario',
-    ),
-    OfficeListModel(
-      fechacreacion: 'fechacreacion',
-      usuariocreacion: 'usuariocreacion',
-      fechamodificacion: 'fechamodificacion',
-      usuariomodificacion: 'usuariomodificacion',
-      idsucursal: 1,
-      name: 'name',
-      direccion: 'direccion',
-      usuario: 'usuario',
-    ),
-    OfficeListModel(
-      fechacreacion: 'fechacreacion',
-      usuariocreacion: 'usuariocreacion',
-      fechamodificacion: 'fechamodificacion',
-      usuariomodificacion: 'usuariomodificacion',
-      idsucursal: 1,
-      name: 'name',
-      direccion: 'direccion',
-      usuario: 'usuario',
-    ),
-  ];
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _direction = TextEditingController();
+  final TextEditingController _searchOptions = TextEditingController();
+
+  late List<OfficeListModel> sucursales;
+
+  late bool _isEdit;
+  late int _sucursalId;
 
   @override
   void initState() {
+    _isEdit = false;
+    sucursales = [];
     super.initState();
-    // _getOfficeList();
+    _getOfficeList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: _sucursalForm(),
       backgroundColor: fillInputSelect,
       body: BlocListener<SucursalBloc, BaseState>(
         listener: (context, state) {
@@ -76,6 +50,30 @@ class _SucursalBodyState extends State<SucursalBody> {
             case const (SucursalSuccess):
               final loadedState = state as SucursalSuccess;
               setState(() => sucursales = loadedState.sucursales);
+              break;
+            case const (SucursalCreatedSuccess):
+              _getOfficeList();
+              CustomStateDialog.showAlertDialog(
+                context,
+                title: 'Sucursales',
+                description: 'Sucursal creada',
+              );
+              break;
+            case const (SucursalEditedSuccess):
+              _getOfficeList();
+              CustomStateDialog.showAlertDialog(
+                context,
+                title: 'Sucursales',
+                description: 'Sucursal editada',
+              );
+              break;
+            case const (SucursalDeletedSuccess):
+              _getOfficeList();
+              CustomStateDialog.showAlertDialog(
+                context,
+                title: 'Sucursales',
+                description: 'Sucursal borrada',
+              );
               break;
             case const (SucursalError):
               final stateError = state as SucursalError;
@@ -91,7 +89,7 @@ class _SucursalBodyState extends State<SucursalBody> {
                 context,
                 title: 'Error',
                 description: 'En este momento no podemos atender tu solicitud.',
-                isError: true,
+                isWarning: true,
               );
               break;
           }
@@ -100,8 +98,17 @@ class _SucursalBodyState extends State<SucursalBody> {
           children: [
             CustomTable(
               pageTitle: 'Sucursales',
-              searchController: searchOffices,
-              onTapSearchButton: () => _getOfficeList(),
+              searchController: _searchOptions,
+              onChangeSearchButton: () => _getOfficeList(),
+              onTapSearchButton: () => _filterTable(),
+              onTapAddButton: () {
+                setState(() {
+                  _isEdit = false;
+                  _name.clear();
+                  _direction.clear();
+                });
+                _scaffoldKey.currentState!.openEndDrawer();
+              },
               headers: const [
                 'iD',
                 'Nombre sucursal',
@@ -111,6 +118,7 @@ class _SucursalBodyState extends State<SucursalBody> {
                 'Fecha modificación',
                 'Usuario creador',
                 'Usuario modificador',
+                '',
               ],
               rows: sucursales.map<Widget>((sucursal) {
                 final index = sucursales.indexOf(sucursal);
@@ -127,7 +135,10 @@ class _SucursalBodyState extends State<SucursalBody> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Text('${sucursal.idsucursal}'),
+                          child: Text(
+                            '${sucursal.idsucursal}',
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                         Expanded(
                           child: Text(sucursal.name),
@@ -150,6 +161,37 @@ class _SucursalBodyState extends State<SucursalBody> {
                         Expanded(
                           child: Text(sucursal.usuariomodificacion),
                         ),
+                        PopupMenuButton(
+                          color: white,
+                          onSelected: (value) {
+                            if (value == TableRowActions.delete) {
+                              _deleteSucursal(
+                                id: sucursal.idsucursal,
+                              );
+                            }
+                            if (value == TableRowActions.edit) {
+                              setState(() {
+                                _isEdit = true;
+                                _name.text = sucursal.name;
+                                _direction.text = sucursal.direccion;
+                                _sucursalId = sucursal.idsucursal;
+                              });
+                              _scaffoldKey.currentState!.openEndDrawer();
+                            }
+                          },
+                          itemBuilder: (context) {
+                            return const [
+                              PopupMenuItem(
+                                value: TableRowActions.edit,
+                                child: Text('Editar'),
+                              ),
+                              PopupMenuItem(
+                                value: TableRowActions.delete,
+                                child: Text('Eliminar'),
+                              ),
+                            ];
+                          },
+                        )
                       ],
                     ),
                   ),
@@ -170,9 +212,97 @@ class _SucursalBodyState extends State<SucursalBody> {
     );
   }
 
+  Widget _sucursalForm() {
+    return Drawer(
+      backgroundColor: fillInputSelect,
+      child: Form(
+        key: _form,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                _isEdit ? 'Editar Sucursal' : 'Nueva Sucursal',
+                style: Theme.of(context).textTheme.displayMedium,
+              ),
+              const SizedBox(height: 20.0),
+              CustomInput(
+                labelText: 'Nombre',
+                controller: _name,
+                isRequired: true,
+              ),
+              const SizedBox(height: 12.0),
+              CustomInput(
+                labelText: 'Dirección',
+                controller: _direction,
+                textInputType: TextInputType.number,
+                isRequired: true,
+              ),
+              const SizedBox(height: 12.0),
+              CustomButton(
+                onPressed: () {
+                  if (_form.currentState!.validate()) {
+                    Navigator.pop(context);
+                    if (_isEdit) {
+                      _editSucursal(id: _sucursalId);
+                    } else {
+                      _saveNewSucursal();
+                    }
+                  }
+                },
+                text: _isEdit ? 'Editar' : 'Guardar',
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _filterTable() {
+    setState(() {
+      sucursales = sucursales
+          .where(
+            (element) => element.name.toLowerCase().contains(
+                  _searchOptions.text.toLowerCase(),
+                ),
+          )
+          .toList();
+    });
+  }
+
   void _getOfficeList() {
     context.read<SucursalBloc>().add(
           OfficeShown(),
+        );
+  }
+
+  void _saveNewSucursal() {
+    context.read<SucursalBloc>().add(
+          OfficeSaved(
+            name: _name.text,
+            direction: _direction.text,
+          ),
+        );
+  }
+
+  void _deleteSucursal({required int id}) {
+    context.read<SucursalBloc>().add(
+          OfficeDeleted(
+            officeID: id,
+          ),
+        );
+  }
+
+  void _editSucursal({required int id}) {
+    context.read<SucursalBloc>().add(
+          OfficeEdited(
+            id: id,
+            name: _name.text,
+            direction: _direction.text,
+          ),
         );
   }
 }

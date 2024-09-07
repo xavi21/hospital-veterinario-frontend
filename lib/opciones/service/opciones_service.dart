@@ -22,4 +22,47 @@ class OpcionesService {
       ),
     );
   }
+
+  Future<Response<dynamic>> addNewOption({
+    required String name,
+    required int orderMenu,
+    required String pagina,
+  }) async {
+    return await client.post(
+      saveOptionPath,
+      data: {
+        'name': name,
+        'ordenmenu': orderMenu,
+        'pagina': '/$pagina',
+      },
+    );
+  }
+
+  Future<Response<dynamic>> updateOption({
+    required int idOpcion,
+    required String name,
+    required int orderMenu,
+    required String pagina,
+  }) async {
+    return await client.put(
+      updateOptionPath,
+      data: {
+        'idopcion': idOpcion,
+        'name': name,
+        'ordenmenu': orderMenu,
+        'pagina': '/$pagina',
+      },
+    );
+  }
+
+  Future<Response<dynamic>> deleteOption({
+    required int id,
+  }) async {
+    return await client.delete(
+      deleteOptionPath,
+      queryParameters: {
+        'id': id,
+      },
+    );
+  }
 }

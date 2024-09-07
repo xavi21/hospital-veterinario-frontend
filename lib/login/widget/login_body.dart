@@ -163,7 +163,7 @@ class _LoginBodyState extends State<LoginBody> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               'Iniciar Sesión',
@@ -172,35 +172,17 @@ class _LoginBodyState extends State<LoginBody> {
             const SizedBox(
               height: 25.0,
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 15.0,
-              ),
-              child: Text(
-                'Correo electrónico',
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: blue,
-                    ),
-              ),
-            ),
             CustomInput(
+              labelText: 'Correo electrónico',
               controller: _usernameController,
               isRequired: true,
               validator: (String? text) => validateEmail(text),
             ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 5.0,
-                left: 15.0,
-              ),
-              child: Text(
-                'Contraseña',
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: blue,
-                    ),
-              ),
+            const SizedBox(
+              height: 12.0,
             ),
             CustomInput(
+              labelText: 'Contraseña',
               controller: _passwordController,
               isRequired: true,
               isPassword: true,
