@@ -32,3 +32,7 @@ const String getMascotasPath = 'api/tipo-mascota/all';
 const String createMascotaPath = 'api/tipo-mascota/save';
 const String updateMascotaPath = 'api/tipo-mascota/update';
 const String deleteMascotaPath = 'api/tipo-mascota/eliminar';
+const String getLaboratoriosPath = 'api/laboratorio/all';
+const String createLaboratorioPath = 'api/laboratorio/save';
+const String updateLaboratorioPath = 'api/laboratorio/update';
+const String deleteLaboratorioPath = 'api/laboratorio/eliminar';

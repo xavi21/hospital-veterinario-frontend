@@ -7,79 +7,79 @@ import 'package:paraiso_canino/common/enum/action_emum.dart';
 import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
+import 'package:paraiso_canino/laboratorio/bloc/laboratorio_bloc.dart';
+import 'package:paraiso_canino/laboratorio/model/laboratorio_list_model.dart';
 import 'package:paraiso_canino/resources/colors.dart';
-import 'package:paraiso_canino/sucursal/bloc/sucursal_bloc.dart';
-import 'package:paraiso_canino/sucursal/model/sucursal_response.dart';
 
-class SucursalBody extends StatefulWidget {
-  const SucursalBody({super.key});
+class LaboratorioBody extends StatefulWidget {
+  const LaboratorioBody({super.key});
 
   @override
-  State<SucursalBody> createState() => _SucursalBodyState();
+  State<LaboratorioBody> createState() => _LaboratorioBodyState();
 }
 
-class _SucursalBodyState extends State<SucursalBody> {
+class _LaboratorioBodyState extends State<LaboratorioBody> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
-  final TextEditingController _direction = TextEditingController();
+  final TextEditingController _descripcion = TextEditingController();
   final TextEditingController _searchOptions = TextEditingController();
 
-  late List<OfficeListModel> sucursales;
+  late List<LaboratorioListModel> laboratorios;
 
   late bool _isEdit;
-  late int _sucursalId;
+  late int _laboratorioId;
 
   @override
   void initState() {
     _isEdit = false;
-    sucursales = [];
+    laboratorios = [];
     super.initState();
-    _getOfficeList();
+    _getLaboratoriosList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: _sucursalForm(),
+      endDrawer: _drawerForm(),
       backgroundColor: fillInputSelect,
-      body: BlocListener<SucursalBloc, BaseState>(
+      body: BlocListener<LaboratorioBloc, BaseState>(
         listener: (context, state) {
           switch (state.runtimeType) {
-            case const (SucursalSuccess):
-              final loadedState = state as SucursalSuccess;
-              setState(() => sucursales = loadedState.sucursales);
+            case const (LaboratorioSuccess):
+              final loadedState = state as LaboratorioSuccess;
+              setState(() => laboratorios = loadedState.laboratorios);
               break;
-            case const (SucursalCreatedSuccess):
-              _getOfficeList();
+            case const (LaboratorioCreatedSuccess):
+              _getLaboratoriosList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Sucursales',
-                description: 'Sucursal creada',
+                title: 'Laboratorios',
+                description: 'Laboratorio creado',
               );
               break;
-            case const (SucursalEditedSuccess):
-              _getOfficeList();
+            case const (LaboratorioEditedSuccess):
+              _getLaboratoriosList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Sucursales',
-                description: 'Sucursal editada',
+                title: 'Laboratorios',
+                description: 'Laboratorio editado',
               );
               break;
-            case const (SucursalDeletedSuccess):
-              _getOfficeList();
+            case const (LaboratorioDeletedSuccess):
+              _getLaboratoriosList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Sucursales',
-                description: 'Sucursal borrada',
+                title: 'Laboratorios',
+                description: 'Laboratorio borrado',
               );
               break;
-            case const (SucursalError):
-              final stateError = state as SucursalError;
+            case const (LaboratorioError):
+              final stateError = state as LaboratorioError;
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Sucursales',
+                title: 'laboratorios',
                 description: stateError.message,
                 isError: true,
               );
@@ -97,37 +97,38 @@ class _SucursalBodyState extends State<SucursalBody> {
         child: Stack(
           children: [
             CustomTable(
-              pageTitle: 'Sucursales',
+              pageTitle: 'Laboratorios',
               searchController: _searchOptions,
-              onChangeSearchButton: () => _getOfficeList(),
+              onChangeSearchButton: () => _getLaboratoriosList(),
               onTapSearchButton: () => _filterTable(),
               onTapAddButton: () {
                 setState(() {
                   _isEdit = false;
                   _name.clear();
-                  _direction.clear();
+                  _descripcion.clear();
                 });
                 _scaffoldKey.currentState!.openEndDrawer();
               },
               headers: const [
                 'iD',
-                'Nombre sucursal',
-                'Dirección',
-                'Usuario',
+                'Nombre Laboratorio',
+                'Descripcion',
                 'Fecha creación',
                 'Fecha modificación',
                 'Usuario creador',
                 'Usuario modificador',
                 '',
               ],
-              rows: sucursales.map<Widget>((sucursal) {
-                final index = sucursales.indexOf(sucursal);
+              rows: laboratorios.map<Widget>((laboratorio) {
+                final index = laboratorios.indexOf(laboratorio);
                 return MouseRegion(
-                  onEnter: (event) => setState(() => sucursal.isHover = true),
-                  onExit: (event) => setState(() => sucursal.isHover = false),
+                  onEnter: (event) =>
+                      setState(() => laboratorio.isHover = true),
+                  onExit: (event) =>
+                      setState(() => laboratorio.isHover = false),
                   child: Container(
                     height: 60.0,
-                    color: sucursal.isHover
+                    color: laboratorio.isHover
                         ? blue.withOpacity(0.1)
                         : index % 2 == 0
                             ? fillInputSelect
@@ -136,45 +137,42 @@ class _SucursalBodyState extends State<SucursalBody> {
                       children: [
                         Expanded(
                           child: Text(
-                            '${sucursal.idsucursal}',
+                            '${laboratorio.idLaboratorio}',
                             textAlign: TextAlign.center,
                           ),
                         ),
                         Expanded(
-                          child: Text(sucursal.name),
+                          child: Text(laboratorio.nombre),
                         ),
                         Expanded(
-                          child: Text(sucursal.direccion),
+                          child: Text(laboratorio.descripcion),
                         ),
                         Expanded(
-                          child: Text(sucursal.usuario),
+                          child: Text(laboratorio.fechacreacion),
                         ),
                         Expanded(
-                          child: Text(sucursal.fechacreacion),
+                          child: Text(laboratorio.fechamodificacion),
                         ),
                         Expanded(
-                          child: Text(sucursal.fechamodificacion),
+                          child: Text(laboratorio.usuariocreacion),
                         ),
                         Expanded(
-                          child: Text(sucursal.usuariocreacion),
-                        ),
-                        Expanded(
-                          child: Text(sucursal.usuariomodificacion),
+                          child: Text(laboratorio.usuariomodificacion),
                         ),
                         PopupMenuButton(
                           color: white,
                           onSelected: (value) {
                             if (value == TableRowActions.delete) {
-                              _deleteSucursal(
-                                id: sucursal.idsucursal,
+                              _deleteLaboratorio(
+                                id: laboratorio.idLaboratorio,
                               );
                             }
                             if (value == TableRowActions.edit) {
                               setState(() {
                                 _isEdit = true;
-                                _name.text = sucursal.name;
-                                _direction.text = sucursal.direccion;
-                                _sucursalId = sucursal.idsucursal;
+                                _name.text = laboratorio.nombre;
+                                _descripcion.text = laboratorio.descripcion;
+                                _laboratorioId = laboratorio.idLaboratorio;
                               });
                               _scaffoldKey.currentState!.openEndDrawer();
                             }
@@ -198,9 +196,9 @@ class _SucursalBodyState extends State<SucursalBody> {
                 );
               }).toList(),
             ),
-            BlocBuilder<SucursalBloc, BaseState>(
+            BlocBuilder<LaboratorioBloc, BaseState>(
               builder: (context, state) {
-                if (state is SucursalInProgress) {
+                if (state is LaboratorioInProgress) {
                   return const Loader();
                 }
                 return Container();
@@ -212,7 +210,7 @@ class _SucursalBodyState extends State<SucursalBody> {
     );
   }
 
-  Widget _sucursalForm() {
+  Widget _drawerForm() {
     return Drawer(
       backgroundColor: fillInputSelect,
       child: Form(
@@ -224,7 +222,7 @@ class _SucursalBodyState extends State<SucursalBody> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                _isEdit ? 'Editar Sucursal' : 'Nueva Sucursal',
+                _isEdit ? 'Editar Laboratorio' : 'Nueva Laboratorio',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 20.0),
@@ -235,8 +233,8 @@ class _SucursalBodyState extends State<SucursalBody> {
               ),
               const SizedBox(height: 12.0),
               CustomInput(
-                labelText: 'Dirección',
-                controller: _direction,
+                labelText: 'Descripcion',
+                controller: _descripcion,
                 textInputType: TextInputType.number,
                 isRequired: true,
               ),
@@ -246,9 +244,9 @@ class _SucursalBodyState extends State<SucursalBody> {
                   if (_form.currentState!.validate()) {
                     Navigator.pop(context);
                     if (_isEdit) {
-                      _editSucursal(id: _sucursalId);
+                      _editLaboratorio(id: _laboratorioId);
                     } else {
-                      _saveNewSucursal();
+                      _saveNewLaboratorio();
                     }
                   }
                 },
@@ -263,9 +261,9 @@ class _SucursalBodyState extends State<SucursalBody> {
 
   void _filterTable() {
     setState(() {
-      sucursales = sucursales
+      laboratorios = laboratorios
           .where(
-            (element) => element.name.toLowerCase().contains(
+            (element) => element.nombre.toLowerCase().contains(
                   _searchOptions.text.toLowerCase(),
                 ),
           )
@@ -273,35 +271,35 @@ class _SucursalBodyState extends State<SucursalBody> {
     });
   }
 
-  void _getOfficeList() {
-    context.read<SucursalBloc>().add(
-          OfficeShown(),
+  void _getLaboratoriosList() {
+    context.read<LaboratorioBloc>().add(
+          LaboratorioShown(),
         );
   }
 
-  void _saveNewSucursal() {
-    context.read<SucursalBloc>().add(
-          OfficeSaved(
+  void _saveNewLaboratorio() {
+    context.read<LaboratorioBloc>().add(
+          LaboratorioSaved(
             name: _name.text,
-            direction: _direction.text,
+            descripcion: _descripcion.text,
           ),
         );
   }
 
-  void _deleteSucursal({required int id}) {
-    context.read<SucursalBloc>().add(
-          OfficeDeleted(
-            officeID: id,
+  void _deleteLaboratorio({required int id}) {
+    context.read<LaboratorioBloc>().add(
+          LaboratorioDeleted(
+            laboratorioId: id,
           ),
         );
   }
 
-  void _editSucursal({required int id}) {
-    context.read<SucursalBloc>().add(
-          OfficeEdited(
+  void _editLaboratorio({required int id}) {
+    context.read<LaboratorioBloc>().add(
+          LaboratorioEdited(
             id: id,
             name: _name.text,
-            direction: _direction.text,
+            descripcion: _descripcion.text,
           ),
         );
   }

@@ -26,10 +26,8 @@ class UserRepository {
   Future<String> getReminderEmail() async {
     try {
       final data = (await storage.read(key: userEmail)) ?? emptyString;
-      print('DATA =>>> $data');
       return data;
     } catch (e) {
-      print('DATA =>>> $e');
       return '';
     }
   }
