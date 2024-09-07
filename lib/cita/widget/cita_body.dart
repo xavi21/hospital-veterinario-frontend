@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paraiso_canino/cita/bloc/cita_bloc.dart';
+import 'package:paraiso_canino/cita/model/cita_list_model.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
 import 'package:paraiso_canino/common/button/custom_button.dart';
 import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
@@ -8,77 +10,75 @@ import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
 import 'package:paraiso_canino/resources/colors.dart';
-import 'package:paraiso_canino/talla/bloc/talla_bloc.dart';
-import 'package:paraiso_canino/talla/model/talla_list_model.dart';
 
-class TallaBody extends StatefulWidget {
-  const TallaBody({super.key});
+class CitaBody extends StatefulWidget {
+  const CitaBody({super.key});
 
   @override
-  State<TallaBody> createState() => _TallaBodyState();
+  State<CitaBody> createState() => _CitaBodyState();
 }
 
-class _TallaBodyState extends State<TallaBody> {
+class _CitaBodyState extends State<CitaBody> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
-  final TextEditingController _searchTalla = TextEditingController();
+  final TextEditingController _searchCitas = TextEditingController();
 
-  late List<TallaListModel> tallas;
+  late List<CitaListModel> citas;
 
   late bool _isEdit;
-  late int _tallaId;
+  late int _ciaId;
 
   @override
   void initState() {
     _isEdit = false;
-    tallas = [];
+    citas = [];
     super.initState();
-    _getTallaList();
+    _getCitasList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: _tallaForm(),
+      endDrawer: _drawerForm(),
       backgroundColor: fillInputSelect,
-      body: BlocListener<TallaBloc, BaseState>(
+      body: BlocListener<CitaBloc, BaseState>(
         listener: (context, state) {
           switch (state.runtimeType) {
-            case const (TallaSuccess):
-              final loadedState = state as TallaSuccess;
-              setState(() => tallas = loadedState.tallas);
+            case const (CitaSuccess):
+              final loadedState = state as CitaSuccess;
+              setState(() => citas = loadedState.citas);
               break;
-            case const (TallaCreatedSuccess):
-              _getTallaList();
+            case const (CitaCreatedSuccess):
+              _getCitasList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
-                description: 'Talla creada',
+                title: 'citas',
+                description: 'Cita creada',
               );
               break;
-            case const (TallaEditedSuccess):
-              _getTallaList();
+            case const (CitaEditedSuccess):
+              _getCitasList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
-                description: 'Talla editada',
+                title: 'citas',
+                description: 'Cita editada',
               );
               break;
-            case const (TallaDeletedSuccess):
-              _getTallaList();
+            case const (CitaDeletedSuccess):
+              _getCitasList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
-                description: 'Talla borrada',
+                title: 'citas',
+                description: 'Cita borrada',
               );
               break;
-            case const (TallaError):
-              final stateError = state as TallaError;
+            case const (CitaError):
+              final stateError = state as CitaError;
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
+                title: 'citas',
                 description: stateError.message,
                 isError: true,
               );
@@ -96,9 +96,9 @@ class _TallaBodyState extends State<TallaBody> {
         child: Stack(
           children: [
             CustomTable(
-              pageTitle: 'Tallas',
-              searchController: _searchTalla,
-              onChangeSearchButton: () => _getTallaList(),
+              pageTitle: 'Citas',
+              searchController: _searchCitas,
+              onChangeSearchButton: () => _getCitasList(),
               onTapSearchButton: () => _filterTable(),
               onTapAddButton: () {
                 setState(() {
@@ -108,22 +108,22 @@ class _TallaBodyState extends State<TallaBody> {
                 _scaffoldKey.currentState!.openEndDrawer();
               },
               headers: const [
-                'iD',
-                'Nombre Talla',
-                'Fecha creación',
-                'Fecha modificación',
-                'Usuario creador',
-                'Usuario modificador',
+                'idestatuscita',
+                'nombre',
+                'fechacreacion',
+                'fechamodificacion',
+                'usuariocreacion',
+                'usuariomodificacion',
                 '',
               ],
-              rows: tallas.map<Widget>((talla) {
-                final index = tallas.indexOf(talla);
+              rows: citas.map<Widget>((cita) {
+                final index = citas.indexOf(cita);
                 return MouseRegion(
-                  onEnter: (event) => setState(() => talla.isHover = true),
-                  onExit: (event) => setState(() => talla.isHover = false),
+                  onEnter: (event) => setState(() => cita.isHover = true),
+                  onExit: (event) => setState(() => cita.isHover = false),
                   child: Container(
                     height: 60.0,
-                    color: talla.isHover
+                    color: cita.isHover
                         ? blue.withOpacity(0.1)
                         : index % 2 == 0
                             ? fillInputSelect
@@ -132,38 +132,38 @@ class _TallaBodyState extends State<TallaBody> {
                       children: [
                         Expanded(
                           child: Text(
-                            '${talla.idTalla}',
+                            '${cita.idestatuscita}',
                             textAlign: TextAlign.center,
                           ),
                         ),
                         Expanded(
-                          child: Text(talla.nombre),
+                          child: Text(cita.nombre),
                         ),
                         Expanded(
-                          child: Text(talla.fechacreacion),
+                          child: Text(cita.fechacreacion),
                         ),
                         Expanded(
-                          child: Text(talla.fechamodificacion),
+                          child: Text(cita.fechamodificacion),
                         ),
                         Expanded(
-                          child: Text(talla.usuariocreacion),
+                          child: Text(cita.usuariocreacion),
                         ),
                         Expanded(
-                          child: Text(talla.usuariomodificacion),
+                          child: Text(cita.usuariomodificacion),
                         ),
                         PopupMenuButton(
                           color: white,
                           onSelected: (value) {
                             if (value == TableRowActions.delete) {
-                              _deleteTalla(
-                                id: talla.idTalla,
+                              _deleteCita(
+                                id: cita.idestatuscita,
                               );
                             }
                             if (value == TableRowActions.edit) {
                               setState(() {
                                 _isEdit = true;
-                                _name.text = talla.nombre;
-                                _tallaId = talla.idTalla;
+                                _name.text = cita.nombre;
+                                _ciaId = cita.idestatuscita;
                               });
                               _scaffoldKey.currentState!.openEndDrawer();
                             }
@@ -187,9 +187,9 @@ class _TallaBodyState extends State<TallaBody> {
                 );
               }).toList(),
             ),
-            BlocBuilder<TallaBloc, BaseState>(
+            BlocBuilder<CitaBloc, BaseState>(
               builder: (context, state) {
-                if (state is TallaInProgress) {
+                if (state is CitaInProgress) {
                   return const Loader();
                 }
                 return Container();
@@ -201,7 +201,7 @@ class _TallaBodyState extends State<TallaBody> {
     );
   }
 
-  Widget _tallaForm() {
+  Widget _drawerForm() {
     return Drawer(
       backgroundColor: fillInputSelect,
       child: Form(
@@ -213,7 +213,7 @@ class _TallaBodyState extends State<TallaBody> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                _isEdit ? 'Editar Talla' : 'Nueva Talla',
+                _isEdit ? 'Editar Cita' : 'Nueva Cita',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 20.0),
@@ -228,9 +228,9 @@ class _TallaBodyState extends State<TallaBody> {
                   if (_form.currentState!.validate()) {
                     Navigator.pop(context);
                     if (_isEdit) {
-                      _editTalla(id: _tallaId);
+                      _updateCita(id: _ciaId);
                     } else {
-                      _saveNewTalla();
+                      _createNewCita();
                     }
                   }
                 },
@@ -245,41 +245,41 @@ class _TallaBodyState extends State<TallaBody> {
 
   void _filterTable() {
     setState(() {
-      tallas = tallas
+      citas = citas
           .where(
             (element) => element.nombre.toLowerCase().contains(
-                  _searchTalla.text.toLowerCase(),
+                  _searchCitas.text.toLowerCase(),
                 ),
           )
           .toList();
     });
   }
 
-  void _getTallaList() {
-    context.read<TallaBloc>().add(
-          TallaShown(),
+  void _getCitasList() {
+    context.read<CitaBloc>().add(
+          CitaShown(),
         );
   }
 
-  void _saveNewTalla() {
-    context.read<TallaBloc>().add(
-          TallaSaved(
+  void _createNewCita() {
+    context.read<CitaBloc>().add(
+          CitaSaved(
             name: _name.text,
           ),
         );
   }
 
-  void _deleteTalla({required int id}) {
-    context.read<TallaBloc>().add(
-          TallaDeleted(
-            tallaID: id,
+  void _deleteCita({required int id}) {
+    context.read<CitaBloc>().add(
+          CitaDeleted(
+            citaId: id,
           ),
         );
   }
 
-  void _editTalla({required int id}) {
-    context.read<TallaBloc>().add(
-          TallaEdited(
+  void _updateCita({required int id}) {
+    context.read<CitaBloc>().add(
+          CitaEdited(
             id: id,
             name: _name.text,
           ),

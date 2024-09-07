@@ -7,78 +7,78 @@ import 'package:paraiso_canino/common/enum/action_emum.dart';
 import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
+import 'package:paraiso_canino/mascota/bloc/mascota_bloc.dart';
+import 'package:paraiso_canino/mascota/model/mascota_list_model.dart';
 import 'package:paraiso_canino/resources/colors.dart';
-import 'package:paraiso_canino/talla/bloc/talla_bloc.dart';
-import 'package:paraiso_canino/talla/model/talla_list_model.dart';
 
-class TallaBody extends StatefulWidget {
-  const TallaBody({super.key});
+class MascotaBody extends StatefulWidget {
+  const MascotaBody({super.key});
 
   @override
-  State<TallaBody> createState() => _TallaBodyState();
+  State<MascotaBody> createState() => _MascotaBodyState();
 }
 
-class _TallaBodyState extends State<TallaBody> {
+class _MascotaBodyState extends State<MascotaBody> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
-  final TextEditingController _searchTalla = TextEditingController();
+  final TextEditingController _searchMascotas = TextEditingController();
 
-  late List<TallaListModel> tallas;
+  late List<MascotaListModel> mascotas;
 
   late bool _isEdit;
-  late int _tallaId;
+  late int _mascotaId;
 
   @override
   void initState() {
     _isEdit = false;
-    tallas = [];
+    mascotas = [];
     super.initState();
-    _getTallaList();
+    _getMascotasList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: _tallaForm(),
+      endDrawer: _drawerForm(),
       backgroundColor: fillInputSelect,
-      body: BlocListener<TallaBloc, BaseState>(
+      body: BlocListener<MascotaBloc, BaseState>(
         listener: (context, state) {
           switch (state.runtimeType) {
-            case const (TallaSuccess):
-              final loadedState = state as TallaSuccess;
-              setState(() => tallas = loadedState.tallas);
+            case const (MascotaSuccess):
+              final loadedState = state as MascotaSuccess;
+              setState(() => mascotas = loadedState.mascotas);
               break;
-            case const (TallaCreatedSuccess):
-              _getTallaList();
+            case const (MascotaCreatedSuccess):
+              _getMascotasList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
-                description: 'Talla creada',
+                title: 'mascotas',
+                description: 'Mascota creada',
               );
               break;
-            case const (TallaEditedSuccess):
-              _getTallaList();
+            case const (MascotaEditedSuccess):
+              _getMascotasList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
-                description: 'Talla editada',
+                title: 'mascotas',
+                description: 'Mascota editada',
               );
               break;
-            case const (TallaDeletedSuccess):
-              _getTallaList();
+            case const (MascotaDeletedSuccess):
+              _getMascotasList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
-                description: 'Talla borrada',
+                title: 'mascotas',
+                description: 'Mascota borrada',
               );
               break;
-            case const (TallaError):
-              final stateError = state as TallaError;
+            case const (MascotaError):
+              final stateError = state as MascotaError;
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
+                title: 'mascotas',
                 description: stateError.message,
                 isError: true,
               );
@@ -96,9 +96,9 @@ class _TallaBodyState extends State<TallaBody> {
         child: Stack(
           children: [
             CustomTable(
-              pageTitle: 'Tallas',
-              searchController: _searchTalla,
-              onChangeSearchButton: () => _getTallaList(),
+              pageTitle: 'Mascotas',
+              searchController: _searchMascotas,
+              onChangeSearchButton: () => _getMascotasList(),
               onTapSearchButton: () => _filterTable(),
               onTapAddButton: () {
                 setState(() {
@@ -109,21 +109,21 @@ class _TallaBodyState extends State<TallaBody> {
               },
               headers: const [
                 'iD',
-                'Nombre Talla',
+                'Nombre Mascota',
                 'Fecha creación',
                 'Fecha modificación',
                 'Usuario creador',
                 'Usuario modificador',
                 '',
               ],
-              rows: tallas.map<Widget>((talla) {
-                final index = tallas.indexOf(talla);
+              rows: mascotas.map<Widget>((mascota) {
+                final index = mascotas.indexOf(mascota);
                 return MouseRegion(
-                  onEnter: (event) => setState(() => talla.isHover = true),
-                  onExit: (event) => setState(() => talla.isHover = false),
+                  onEnter: (event) => setState(() => mascota.isHover = true),
+                  onExit: (event) => setState(() => mascota.isHover = false),
                   child: Container(
                     height: 60.0,
-                    color: talla.isHover
+                    color: mascota.isHover
                         ? blue.withOpacity(0.1)
                         : index % 2 == 0
                             ? fillInputSelect
@@ -132,38 +132,38 @@ class _TallaBodyState extends State<TallaBody> {
                       children: [
                         Expanded(
                           child: Text(
-                            '${talla.idTalla}',
+                            '${mascota.idTipoMascota}',
                             textAlign: TextAlign.center,
                           ),
                         ),
                         Expanded(
-                          child: Text(talla.nombre),
+                          child: Text(mascota.nombre),
                         ),
                         Expanded(
-                          child: Text(talla.fechacreacion),
+                          child: Text(mascota.fechacreacion),
                         ),
                         Expanded(
-                          child: Text(talla.fechamodificacion),
+                          child: Text(mascota.fechamodificacion),
                         ),
                         Expanded(
-                          child: Text(talla.usuariocreacion),
+                          child: Text(mascota.usuariocreacion),
                         ),
                         Expanded(
-                          child: Text(talla.usuariomodificacion),
+                          child: Text(mascota.usuariomodificacion),
                         ),
                         PopupMenuButton(
                           color: white,
                           onSelected: (value) {
                             if (value == TableRowActions.delete) {
-                              _deleteTalla(
-                                id: talla.idTalla,
+                              _deleteMascota(
+                                id: mascota.idTipoMascota,
                               );
                             }
                             if (value == TableRowActions.edit) {
                               setState(() {
                                 _isEdit = true;
-                                _name.text = talla.nombre;
-                                _tallaId = talla.idTalla;
+                                _name.text = mascota.nombre;
+                                _mascotaId = mascota.idTipoMascota;
                               });
                               _scaffoldKey.currentState!.openEndDrawer();
                             }
@@ -187,9 +187,9 @@ class _TallaBodyState extends State<TallaBody> {
                 );
               }).toList(),
             ),
-            BlocBuilder<TallaBloc, BaseState>(
+            BlocBuilder<MascotaBloc, BaseState>(
               builder: (context, state) {
-                if (state is TallaInProgress) {
+                if (state is MascotaInProgress) {
                   return const Loader();
                 }
                 return Container();
@@ -201,7 +201,7 @@ class _TallaBodyState extends State<TallaBody> {
     );
   }
 
-  Widget _tallaForm() {
+  Widget _drawerForm() {
     return Drawer(
       backgroundColor: fillInputSelect,
       child: Form(
@@ -213,7 +213,7 @@ class _TallaBodyState extends State<TallaBody> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                _isEdit ? 'Editar Talla' : 'Nueva Talla',
+                _isEdit ? 'Editar Mascota' : 'Nueva Mascota',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 20.0),
@@ -228,9 +228,9 @@ class _TallaBodyState extends State<TallaBody> {
                   if (_form.currentState!.validate()) {
                     Navigator.pop(context);
                     if (_isEdit) {
-                      _editTalla(id: _tallaId);
+                      _editMascota(id: _mascotaId);
                     } else {
-                      _saveNewTalla();
+                      _saveNewMascota();
                     }
                   }
                 },
@@ -245,41 +245,41 @@ class _TallaBodyState extends State<TallaBody> {
 
   void _filterTable() {
     setState(() {
-      tallas = tallas
+      mascotas = mascotas
           .where(
             (element) => element.nombre.toLowerCase().contains(
-                  _searchTalla.text.toLowerCase(),
+                  _searchMascotas.text.toLowerCase(),
                 ),
           )
           .toList();
     });
   }
 
-  void _getTallaList() {
-    context.read<TallaBloc>().add(
-          TallaShown(),
+  void _getMascotasList() {
+    context.read<MascotaBloc>().add(
+          MascotaShown(),
         );
   }
 
-  void _saveNewTalla() {
-    context.read<TallaBloc>().add(
-          TallaSaved(
+  void _saveNewMascota() {
+    context.read<MascotaBloc>().add(
+          MascotaSaved(
             name: _name.text,
           ),
         );
   }
 
-  void _deleteTalla({required int id}) {
-    context.read<TallaBloc>().add(
-          TallaDeleted(
-            tallaID: id,
+  void _deleteMascota({required int id}) {
+    context.read<MascotaBloc>().add(
+          MascotaDeleted(
+            mascotaId: id,
           ),
         );
   }
 
-  void _editTalla({required int id}) {
-    context.read<TallaBloc>().add(
-          TallaEdited(
+  void _editMascota({required int id}) {
+    context.read<MascotaBloc>().add(
+          MascotaEdited(
             id: id,
             name: _name.text,
           ),

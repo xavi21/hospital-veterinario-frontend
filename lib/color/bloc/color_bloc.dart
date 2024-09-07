@@ -1,37 +1,35 @@
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paraiso_canino/color/model/color_list_model.dart';
+import 'package:paraiso_canino/color/service/color_service.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
-import 'package:paraiso_canino/menu/model/menu_model.dart';
-import 'package:paraiso_canino/menu/service/menu_service.dart';
 import 'package:paraiso_canino/resources/constants.dart';
 
-part 'menu_event.dart';
-part 'menu_state.dart';
+part 'color_event.dart';
+part 'color_state.dart';
 
-class MenuBloc extends Bloc<MenuEvent, MenuState> {
-  MenuBloc() : super(MenuInitial()) {
-    on<MenuListShown>(getMenuList);
-    on<MenuSaved>(createMenu);
-    on<MenuEdited>(updateMenu);
-    on<MenuDeleted>(deleteMenu);
+class ColorBloc extends Bloc<ColorEvent, ColorState> {
+  ColorBloc() : super(ColorInitial()) {
+    on<ColorShown>(getColors);
+    on<ColorSaved>(createColor);
+    on<ColorEdited>(updateColor);
+    on<ColorDeleted>(deleteColor);
   }
 
-  final MenuService service = MenuService();
+  final ColorService service = ColorService();
 
-  Future<void> getMenuList(
-    MenuListShown event,
+  Future<void> getColors(
+    ColorShown event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      ColorInProgress(),
     );
     try {
-      final List<MenuModel> resp = await service.getMenu();
+      final List<ColorListModel> resp = await service.getColors();
       emit(
-        MenuListSuccess(
-          menuList: resp,
-        ),
+        ColorSuccess(colores: resp),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -42,7 +40,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          ColorError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -50,20 +48,19 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  Future<void> createMenu(
-    MenuSaved event,
+  Future<void> createColor(
+    ColorSaved event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      ColorInProgress(),
     );
     try {
-      await service.createMenu(
+      await service.createColor(
         name: event.name,
-        orderMenu: event.orderMenu,
       );
       emit(
-        MenuCreatedSuccess(),
+        ColorCreatedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -74,7 +71,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          ColorError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -82,21 +79,20 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  Future<void> updateMenu(
-    MenuEdited event,
+  Future<void> updateColor(
+    ColorEdited event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      ColorInProgress(),
     );
     try {
-      await service.updateMenu(
+      await service.updateColor(
         id: event.id,
         name: event.name,
-        orderMenu: event.orderMenu,
       );
       emit(
-        MenuEditedSuccess(),
+        ColorEditedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -107,7 +103,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          ColorError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -115,17 +111,19 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  Future<void> deleteMenu(
-    MenuDeleted event,
+  Future<void> deleteColor(
+    ColorDeleted event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      ColorInProgress(),
     );
     try {
-      await service.deleteMenu(id: event.menuID);
+      await service.deleteColor(
+        id: event.colorId,
+      );
       emit(
-        MenuCreatedSuccess(),
+        ColorDeletedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -136,7 +134,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          ColorError(
             message: error.response!.data[responseMessage],
           ),
         );

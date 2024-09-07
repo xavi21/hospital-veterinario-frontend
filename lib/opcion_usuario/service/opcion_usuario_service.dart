@@ -22,4 +22,61 @@ class OpcioneUsuarioService {
       ),
     );
   }
+
+  Future<Response<dynamic>> createUserOption({
+    required String idUsuario,
+    required int idMenu,
+    required int idOpcion,
+    required int alta,
+    required int baja,
+    required int cambio,
+  }) async {
+    return await client.post(
+      createSubMenuPath,
+      data: {
+        'idUsuario': idUsuario,
+        'idMenu': idMenu,
+        'idOpcion': idOpcion,
+        'alta': alta,
+        'baja': baja,
+        'cambio': cambio
+      },
+    );
+  }
+
+  Future<Response<dynamic>> updateUserOption({
+    required String idUsuario,
+    required int idMenu,
+    required int idOpcion,
+    required int alta,
+    required int baja,
+    required int cambio,
+  }) async {
+    return await client.put(
+      updateSubMenuPath,
+      data: {
+        'idUsuario': idUsuario,
+        'idMenu': idMenu,
+        'idOpcion': idOpcion,
+        'alta': alta,
+        'baja': baja,
+        'cambio': cambio,
+      },
+    );
+  }
+
+  Future<Response<dynamic>> deleteUserOption({
+    required String idUsuario,
+    required int idMenu,
+    required int idOpcion,
+  }) async {
+    return await client.delete(
+      deleteSubMenuPath,
+      queryParameters: {
+        'idUsuario': idUsuario,
+        'idMenu': idMenu,
+        'idOpcion': idOpcion,
+      },
+    );
+  }
 }

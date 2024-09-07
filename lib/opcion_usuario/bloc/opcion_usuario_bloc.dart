@@ -12,6 +12,9 @@ part 'opcion_usuario_state.dart';
 class OpcionUsuarioBloc extends Bloc<OpcionUsuarioEvent, OpcionUsuarioState> {
   OpcionUsuarioBloc() : super(OpcionUsuarioInitial()) {
     on<UserOptionsShown>(getOptionList);
+    on<UserOptionSaved>(createUserOption);
+    on<UserOptionEdited>(updateUserOption);
+    on<UserOptionDeleted>(deleteUserOption);
   }
 
   OpcioneUsuarioService service = OpcioneUsuarioService();
@@ -29,6 +32,111 @@ class OpcionUsuarioBloc extends Bloc<OpcionUsuarioEvent, OpcionUsuarioState> {
         OpcionUsuarioListSuccess(
           opcionesList: response,
         ),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          OpcionUsuarioServiceError(
+            message: error.response!.data![responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> createUserOption(
+    UserOptionSaved event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      OpcionUsuarioInProgress(),
+    );
+    try {
+      await service.createUserOption(
+        idUsuario: event.idUsuario,
+        idMenu: event.idMenu,
+        idOpcion: event.idOpcion,
+        alta: event.alta,
+        baja: event.baja,
+        cambio: event.cambio,
+      );
+      emit(
+        OpcionUsuarioCreatedSuccess(),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          OpcionUsuarioServiceError(
+            message: error.response!.data![responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> updateUserOption(
+    UserOptionEdited event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      OpcionUsuarioInProgress(),
+    );
+    try {
+      await service.updateUserOption(
+        idUsuario: event.idUsuario,
+        idMenu: event.idMenu,
+        idOpcion: event.idOpcion,
+        alta: event.alta,
+        baja: event.baja,
+        cambio: event.cambio,
+      );
+      emit(
+        OpcionUsuarioEditedSuccess(),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          OpcionUsuarioServiceError(
+            message: error.response!.data![responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> deleteUserOption(
+    UserOptionDeleted event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      OpcionUsuarioInProgress(),
+    );
+    try {
+      await service.deleteUserOption(
+        idUsuario: event.idUsuario,
+        idMenu: event.idMenu,
+        idOpcion: event.idOpcion,
+      );
+      emit(
+        OpcionUsuarioDeletedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||

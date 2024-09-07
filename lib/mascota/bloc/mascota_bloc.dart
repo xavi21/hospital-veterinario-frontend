@@ -2,36 +2,34 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
-import 'package:paraiso_canino/menu/model/menu_model.dart';
-import 'package:paraiso_canino/menu/service/menu_service.dart';
+import 'package:paraiso_canino/mascota/model/mascota_list_model.dart';
+import 'package:paraiso_canino/mascota/service/mascota_service.dart';
 import 'package:paraiso_canino/resources/constants.dart';
 
-part 'menu_event.dart';
-part 'menu_state.dart';
+part 'mascota_event.dart';
+part 'mascota_state.dart';
 
-class MenuBloc extends Bloc<MenuEvent, MenuState> {
-  MenuBloc() : super(MenuInitial()) {
-    on<MenuListShown>(getMenuList);
-    on<MenuSaved>(createMenu);
-    on<MenuEdited>(updateMenu);
-    on<MenuDeleted>(deleteMenu);
+class MascotaBloc extends Bloc<MascotaEvent, MascotaState> {
+  MascotaBloc() : super(MascotaInitial()) {
+    on<MascotaShown>(getMascotas);
+    on<MascotaSaved>(createMascota);
+    on<MascotaEdited>(updateMascota);
+    on<MascotaDeleted>(deleteMascota);
   }
 
-  final MenuService service = MenuService();
+  final MascotaService service = MascotaService();
 
-  Future<void> getMenuList(
-    MenuListShown event,
+  Future<void> getMascotas(
+    MascotaShown event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      MascotaInProgress(),
     );
     try {
-      final List<MenuModel> resp = await service.getMenu();
+      final List<MascotaListModel> resp = await service.getMascotas();
       emit(
-        MenuListSuccess(
-          menuList: resp,
-        ),
+        MascotaSuccess(mascotas: resp),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -42,7 +40,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          MascotaError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -50,20 +48,19 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  Future<void> createMenu(
-    MenuSaved event,
+  Future<void> createMascota(
+    MascotaSaved event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      MascotaInProgress(),
     );
     try {
-      await service.createMenu(
+      await service.createMascota(
         name: event.name,
-        orderMenu: event.orderMenu,
       );
       emit(
-        MenuCreatedSuccess(),
+        MascotaCreatedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -74,7 +71,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          MascotaError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -82,21 +79,20 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  Future<void> updateMenu(
-    MenuEdited event,
+  Future<void> updateMascota(
+    MascotaEdited event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      MascotaInProgress(),
     );
     try {
-      await service.updateMenu(
+      await service.updateMascota(
         id: event.id,
         name: event.name,
-        orderMenu: event.orderMenu,
       );
       emit(
-        MenuEditedSuccess(),
+        MascotaEditedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -107,7 +103,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          MascotaError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -115,17 +111,19 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  Future<void> deleteMenu(
-    MenuDeleted event,
+  Future<void> deleteMascota(
+    MascotaDeleted event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      MascotaInProgress(),
     );
     try {
-      await service.deleteMenu(id: event.menuID);
+      await service.deleteMascota(
+        id: event.mascotaId,
+      );
       emit(
-        MenuCreatedSuccess(),
+        MascotaDeletedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -136,7 +134,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          MascotaError(
             message: error.response!.data[responseMessage],
           ),
         );

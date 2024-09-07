@@ -22,4 +22,43 @@ class MenuService {
       ),
     );
   }
+
+  Future<Response<dynamic>> createMenu({
+    required String name,
+    required int orderMenu,
+  }) async {
+    return await client.post(
+      createMenuPath,
+      data: {
+        'name': name,
+        'ordenmenu': orderMenu,
+      },
+    );
+  }
+
+  Future<Response<dynamic>> updateMenu({
+    required int id,
+    required String name,
+    required int orderMenu,
+  }) async {
+    return await client.put(
+      updateMenuPath,
+      data: {
+        'idmenu': id,
+        'name': name,
+        'ordenmenu': orderMenu,
+      },
+    );
+  }
+
+  Future<Response<dynamic>> deleteMenu({
+    required int id,
+  }) async {
+    return await client.delete(
+      deleteMenuPath,
+      queryParameters: {
+        'id': id,
+      },
+    );
+  }
 }

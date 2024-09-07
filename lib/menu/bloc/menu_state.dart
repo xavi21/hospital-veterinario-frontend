@@ -14,6 +14,12 @@ final class MenuListSuccess extends MenuState {
   });
 }
 
+final class MenuCreatedSuccess extends MenuState {}
+
+final class MenuEditedSuccess extends MenuState {}
+
+final class MenuDeletedSuccess extends MenuState {}
+
 final class MenuServiceError extends MenuState {
   final String message;
 

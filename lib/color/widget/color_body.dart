@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paraiso_canino/color/bloc/color_bloc.dart';
+import 'package:paraiso_canino/color/model/color_list_model.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
 import 'package:paraiso_canino/common/button/custom_button.dart';
 import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
@@ -8,77 +10,75 @@ import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
 import 'package:paraiso_canino/resources/colors.dart';
-import 'package:paraiso_canino/talla/bloc/talla_bloc.dart';
-import 'package:paraiso_canino/talla/model/talla_list_model.dart';
 
-class TallaBody extends StatefulWidget {
-  const TallaBody({super.key});
+class ColorBody extends StatefulWidget {
+  const ColorBody({super.key});
 
   @override
-  State<TallaBody> createState() => _TallaBodyState();
+  State<ColorBody> createState() => _ColorBodyState();
 }
 
-class _TallaBodyState extends State<TallaBody> {
+class _ColorBodyState extends State<ColorBody> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
-  final TextEditingController _searchTalla = TextEditingController();
+  final TextEditingController _searchColors = TextEditingController();
 
-  late List<TallaListModel> tallas;
+  late List<ColorListModel> colores;
 
   late bool _isEdit;
-  late int _tallaId;
+  late int _coloresId;
 
   @override
   void initState() {
     _isEdit = false;
-    tallas = [];
+    colores = [];
     super.initState();
-    _getTallaList();
+    _getColorsList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: _tallaForm(),
+      endDrawer: _drawerForm(),
       backgroundColor: fillInputSelect,
-      body: BlocListener<TallaBloc, BaseState>(
+      body: BlocListener<ColorBloc, BaseState>(
         listener: (context, state) {
           switch (state.runtimeType) {
-            case const (TallaSuccess):
-              final loadedState = state as TallaSuccess;
-              setState(() => tallas = loadedState.tallas);
+            case const (ColorSuccess):
+              final loadedState = state as ColorSuccess;
+              setState(() => colores = loadedState.colores);
               break;
-            case const (TallaCreatedSuccess):
-              _getTallaList();
+            case const (ColorCreatedSuccess):
+              _getColorsList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
-                description: 'Talla creada',
+                title: 'Color',
+                description: 'Color creado',
               );
               break;
-            case const (TallaEditedSuccess):
-              _getTallaList();
+            case const (ColorEditedSuccess):
+              _getColorsList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
-                description: 'Talla editada',
+                title: 'Color',
+                description: 'Color editado',
               );
               break;
-            case const (TallaDeletedSuccess):
-              _getTallaList();
+            case const (ColorDeletedSuccess):
+              _getColorsList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
-                description: 'Talla borrada',
+                title: 'Color',
+                description: 'Color borrado',
               );
               break;
-            case const (TallaError):
-              final stateError = state as TallaError;
+            case const (ColorError):
+              final stateError = state as ColorError;
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'Tallas',
+                title: 'Color',
                 description: stateError.message,
                 isError: true,
               );
@@ -96,9 +96,9 @@ class _TallaBodyState extends State<TallaBody> {
         child: Stack(
           children: [
             CustomTable(
-              pageTitle: 'Tallas',
-              searchController: _searchTalla,
-              onChangeSearchButton: () => _getTallaList(),
+              pageTitle: 'Colores',
+              searchController: _searchColors,
+              onChangeSearchButton: () => _getColorsList(),
               onTapSearchButton: () => _filterTable(),
               onTapAddButton: () {
                 setState(() {
@@ -108,22 +108,22 @@ class _TallaBodyState extends State<TallaBody> {
                 _scaffoldKey.currentState!.openEndDrawer();
               },
               headers: const [
-                'iD',
-                'Nombre Talla',
+                'ID',
+                'Nombre color',
                 'Fecha creación',
                 'Fecha modificación',
                 'Usuario creador',
                 'Usuario modificador',
                 '',
               ],
-              rows: tallas.map<Widget>((talla) {
-                final index = tallas.indexOf(talla);
+              rows: colores.map<Widget>((color) {
+                final index = colores.indexOf(color);
                 return MouseRegion(
-                  onEnter: (event) => setState(() => talla.isHover = true),
-                  onExit: (event) => setState(() => talla.isHover = false),
+                  onEnter: (event) => setState(() => color.isHover = true),
+                  onExit: (event) => setState(() => color.isHover = false),
                   child: Container(
                     height: 60.0,
-                    color: talla.isHover
+                    color: color.isHover
                         ? blue.withOpacity(0.1)
                         : index % 2 == 0
                             ? fillInputSelect
@@ -132,38 +132,38 @@ class _TallaBodyState extends State<TallaBody> {
                       children: [
                         Expanded(
                           child: Text(
-                            '${talla.idTalla}',
+                            '${color.idColor}',
                             textAlign: TextAlign.center,
                           ),
                         ),
                         Expanded(
-                          child: Text(talla.nombre),
+                          child: Text(color.nombre),
                         ),
                         Expanded(
-                          child: Text(talla.fechacreacion),
+                          child: Text(color.fechacreacion),
                         ),
                         Expanded(
-                          child: Text(talla.fechamodificacion),
+                          child: Text(color.fechamodificacion),
                         ),
                         Expanded(
-                          child: Text(talla.usuariocreacion),
+                          child: Text(color.usuariocreacion),
                         ),
                         Expanded(
-                          child: Text(talla.usuariomodificacion),
+                          child: Text(color.usuariomodificacion),
                         ),
                         PopupMenuButton(
                           color: white,
                           onSelected: (value) {
                             if (value == TableRowActions.delete) {
-                              _deleteTalla(
-                                id: talla.idTalla,
+                              _deleteColor(
+                                id: color.idColor,
                               );
                             }
                             if (value == TableRowActions.edit) {
                               setState(() {
                                 _isEdit = true;
-                                _name.text = talla.nombre;
-                                _tallaId = talla.idTalla;
+                                _name.text = color.nombre;
+                                _coloresId = color.idColor;
                               });
                               _scaffoldKey.currentState!.openEndDrawer();
                             }
@@ -187,9 +187,9 @@ class _TallaBodyState extends State<TallaBody> {
                 );
               }).toList(),
             ),
-            BlocBuilder<TallaBloc, BaseState>(
+            BlocBuilder<ColorBloc, BaseState>(
               builder: (context, state) {
-                if (state is TallaInProgress) {
+                if (state is ColorInProgress) {
                   return const Loader();
                 }
                 return Container();
@@ -201,7 +201,7 @@ class _TallaBodyState extends State<TallaBody> {
     );
   }
 
-  Widget _tallaForm() {
+  Widget _drawerForm() {
     return Drawer(
       backgroundColor: fillInputSelect,
       child: Form(
@@ -213,7 +213,7 @@ class _TallaBodyState extends State<TallaBody> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                _isEdit ? 'Editar Talla' : 'Nueva Talla',
+                _isEdit ? 'Editar Color' : 'Nueva Color',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 20.0),
@@ -228,9 +228,9 @@ class _TallaBodyState extends State<TallaBody> {
                   if (_form.currentState!.validate()) {
                     Navigator.pop(context);
                     if (_isEdit) {
-                      _editTalla(id: _tallaId);
+                      _updateColor(id: _coloresId);
                     } else {
-                      _saveNewTalla();
+                      _saveNewColor();
                     }
                   }
                 },
@@ -245,41 +245,41 @@ class _TallaBodyState extends State<TallaBody> {
 
   void _filterTable() {
     setState(() {
-      tallas = tallas
+      colores = colores
           .where(
             (element) => element.nombre.toLowerCase().contains(
-                  _searchTalla.text.toLowerCase(),
+                  _searchColors.text.toLowerCase(),
                 ),
           )
           .toList();
     });
   }
 
-  void _getTallaList() {
-    context.read<TallaBloc>().add(
-          TallaShown(),
+  void _getColorsList() {
+    context.read<ColorBloc>().add(
+          ColorShown(),
         );
   }
 
-  void _saveNewTalla() {
-    context.read<TallaBloc>().add(
-          TallaSaved(
+  void _saveNewColor() {
+    context.read<ColorBloc>().add(
+          ColorSaved(
             name: _name.text,
           ),
         );
   }
 
-  void _deleteTalla({required int id}) {
-    context.read<TallaBloc>().add(
-          TallaDeleted(
-            tallaID: id,
+  void _deleteColor({required int id}) {
+    context.read<ColorBloc>().add(
+          ColorDeleted(
+            colorId: id,
           ),
         );
   }
 
-  void _editTalla({required int id}) {
-    context.read<TallaBloc>().add(
-          TallaEdited(
+  void _updateColor({required int id}) {
+    context.read<ColorBloc>().add(
+          ColorEdited(
             id: id,
             name: _name.text,
           ),

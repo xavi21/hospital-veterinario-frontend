@@ -8,3 +8,51 @@ abstract class OpcionUsuarioEvent extends Equatable {
 }
 
 final class UserOptionsShown extends OpcionUsuarioEvent {}
+
+final class UserOptionSaved extends OpcionUsuarioEvent {
+  final String idUsuario;
+  final int idMenu;
+  final int idOpcion;
+  final int alta;
+  final int baja;
+  final int cambio;
+
+  const UserOptionSaved({
+    required this.idUsuario,
+    required this.idMenu,
+    required this.idOpcion,
+    required this.alta,
+    required this.baja,
+    required this.cambio,
+  });
+}
+
+final class UserOptionEdited extends OpcionUsuarioEvent {
+  final String idUsuario;
+  final int idMenu;
+  final int idOpcion;
+  final int alta;
+  final int baja;
+  final int cambio;
+
+  const UserOptionEdited({
+    required this.idUsuario,
+    required this.idMenu,
+    required this.idOpcion,
+    required this.alta,
+    required this.baja,
+    required this.cambio,
+  });
+}
+
+final class UserOptionDeleted extends OpcionUsuarioEvent {
+  final String idUsuario;
+  final int idMenu;
+  final int idOpcion;
+
+  const UserOptionDeleted({
+    required this.idUsuario,
+    required this.idMenu,
+    required this.idOpcion,
+  });
+}

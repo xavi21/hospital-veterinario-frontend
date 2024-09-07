@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:paraiso_canino/cita/cita_page.dart';
+import 'package:paraiso_canino/color/color_page.dart';
+import 'package:paraiso_canino/mascota/mascota_page.dart';
 import 'package:paraiso_canino/menu/menu_page.dart';
 import 'package:paraiso_canino/opcion_usuario/opcion_usuario_page.dart';
 import 'package:paraiso_canino/opciones/opciones_page.dart';
@@ -13,14 +16,14 @@ final Map<String, Widget> routes = {
   'Opcion': const OpcionesPage(),
   'Menu': const MenuPage(),
   'OpciondeUsuario': const OpcionUsuarioPage(),
-  'Cita': Container(),
+  'Cita': const CitaPage(),
   'Consulta': Container(),
   'Hospitalización': Container(),
   'Grooming': Container(),
   'Laboratorio': Container(),
   'Cliente': Container(),
-  'Mascota': Container(),
+  'Mascota': const MascotaPage(),
   'Talla': const TallaPage(),
-  'Color': Container(),
+  'Color': const ColorPage(),
   'Medicamento': Container(),
 };

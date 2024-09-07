@@ -14,6 +14,12 @@ final class OpcionUsuarioListSuccess extends OpcionUsuarioState {
   });
 }
 
+final class OpcionUsuarioCreatedSuccess extends OpcionUsuarioState {}
+
+final class OpcionUsuarioEditedSuccess extends OpcionUsuarioState {}
+
+final class OpcionUsuarioDeletedSuccess extends OpcionUsuarioState {}
+
 final class OpcionUsuarioServiceError extends OpcionUsuarioState {
   final String message;
 

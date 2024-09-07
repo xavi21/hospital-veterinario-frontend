@@ -1,37 +1,35 @@
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paraiso_canino/cita/model/cita_list_model.dart';
+import 'package:paraiso_canino/cita/service/cita_service.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
-import 'package:paraiso_canino/menu/model/menu_model.dart';
-import 'package:paraiso_canino/menu/service/menu_service.dart';
 import 'package:paraiso_canino/resources/constants.dart';
 
-part 'menu_event.dart';
-part 'menu_state.dart';
+part 'cita_event.dart';
+part 'cita_state.dart';
 
-class MenuBloc extends Bloc<MenuEvent, MenuState> {
-  MenuBloc() : super(MenuInitial()) {
-    on<MenuListShown>(getMenuList);
-    on<MenuSaved>(createMenu);
-    on<MenuEdited>(updateMenu);
-    on<MenuDeleted>(deleteMenu);
+class CitaBloc extends Bloc<CitaEvent, CitaState> {
+  CitaBloc() : super(CitaInitial()) {
+    on<CitaShown>(getCitas);
+    on<CitaSaved>(createCita);
+    on<CitaEdited>(updateCita);
+    on<CitaDeleted>(deleteCita);
   }
 
-  final MenuService service = MenuService();
+  final CitaService service = CitaService();
 
-  Future<void> getMenuList(
-    MenuListShown event,
+  Future<void> getCitas(
+    CitaShown event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      CitaInProgress(),
     );
     try {
-      final List<MenuModel> resp = await service.getMenu();
+      final List<CitaListModel> resp = await service.getCitas();
       emit(
-        MenuListSuccess(
-          menuList: resp,
-        ),
+        CitaSuccess(citas: resp),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -42,7 +40,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          CitaError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -50,20 +48,19 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  Future<void> createMenu(
-    MenuSaved event,
+  Future<void> createCita(
+    CitaSaved event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      CitaInProgress(),
     );
     try {
-      await service.createMenu(
+      await service.createCita(
         name: event.name,
-        orderMenu: event.orderMenu,
       );
       emit(
-        MenuCreatedSuccess(),
+        CitaCreatedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -74,7 +71,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          CitaError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -82,21 +79,20 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  Future<void> updateMenu(
-    MenuEdited event,
+  Future<void> updateCita(
+    CitaEdited event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      CitaInProgress(),
     );
     try {
-      await service.updateMenu(
+      await service.updateCita(
         id: event.id,
         name: event.name,
-        orderMenu: event.orderMenu,
       );
       emit(
-        MenuEditedSuccess(),
+        CitaEditedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -107,7 +103,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          CitaError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -115,17 +111,19 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  Future<void> deleteMenu(
-    MenuDeleted event,
+  Future<void> deleteCita(
+    CitaDeleted event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      MenuInProgress(),
+      CitaInProgress(),
     );
     try {
-      await service.deleteMenu(id: event.menuID);
+      await service.deleteCita(
+        id: event.citaId,
+      );
       emit(
-        MenuCreatedSuccess(),
+        CitaDeletedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -136,7 +134,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         );
       } else {
         emit(
-          MenuServiceError(
+          CitaError(
             message: error.response!.data[responseMessage],
           ),
         );
