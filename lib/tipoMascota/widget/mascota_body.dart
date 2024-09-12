@@ -7,24 +7,24 @@ import 'package:paraiso_canino/common/enum/action_emum.dart';
 import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
-import 'package:paraiso_canino/mascota/bloc/mascota_bloc.dart';
-import 'package:paraiso_canino/mascota/model/mascota_list_model.dart';
+import 'package:paraiso_canino/tipoMascota/bloc/mascota_bloc.dart';
+import 'package:paraiso_canino/tipoMascota/model/mascota_list_model.dart';
 import 'package:paraiso_canino/resources/colors.dart';
 
-class MascotaBody extends StatefulWidget {
-  const MascotaBody({super.key});
+class TipoMascotaBody extends StatefulWidget {
+  const TipoMascotaBody({super.key});
 
   @override
-  State<MascotaBody> createState() => _MascotaBodyState();
+  State<TipoMascotaBody> createState() => _TipoMascotaBodyState();
 }
 
-class _MascotaBodyState extends State<MascotaBody> {
+class _TipoMascotaBodyState extends State<TipoMascotaBody> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
   final TextEditingController _searchMascotas = TextEditingController();
 
-  late List<MascotaListModel> mascotas;
+  late List<TipoMascotaListModel> mascotas;
 
   late bool _isEdit;
   late int _mascotaId;
@@ -43,39 +43,39 @@ class _MascotaBodyState extends State<MascotaBody> {
       key: _scaffoldKey,
       endDrawer: _drawerForm(),
       backgroundColor: fillInputSelect,
-      body: BlocListener<MascotaBloc, BaseState>(
+      body: BlocListener<TipoMascotaBloc, BaseState>(
         listener: (context, state) {
           switch (state.runtimeType) {
-            case const (MascotaSuccess):
-              final loadedState = state as MascotaSuccess;
-              setState(() => mascotas = loadedState.mascotas);
+            case const (TipoMascotaSuccess):
+              final loadedState = state as TipoMascotaSuccess;
+              setState(() => mascotas = loadedState.tipomascotas);
               break;
-            case const (MascotaCreatedSuccess):
+            case const (TipoMascotaCreatedSuccess):
               _getMascotasList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'mascotas',
-                description: 'Mascota creada',
+                title: 'Tipomascotas',
+                description: 'TipoMascota creada',
               );
               break;
-            case const (MascotaEditedSuccess):
+            case const (TipoMascotaEditedSuccess):
               _getMascotasList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'mascotas',
-                description: 'Mascota editada',
+                title: 'Tipomascotas',
+                description: 'TipoMascota editada',
               );
               break;
-            case const (MascotaDeletedSuccess):
+            case const (TipoMascotaDeletedSuccess):
               _getMascotasList();
               CustomStateDialog.showAlertDialog(
                 context,
-                title: 'mascotas',
-                description: 'Mascota borrada',
+                title: 'Tipomascotas',
+                description: 'TipoMascota borrada',
               );
               break;
-            case const (MascotaError):
-              final stateError = state as MascotaError;
+            case const (TipoMascotaError):
+              final stateError = state as TipoMascotaError;
               CustomStateDialog.showAlertDialog(
                 context,
                 title: 'mascotas',
@@ -187,9 +187,9 @@ class _MascotaBodyState extends State<MascotaBody> {
                 );
               }).toList(),
             ),
-            BlocBuilder<MascotaBloc, BaseState>(
+            BlocBuilder<TipoMascotaBloc, BaseState>(
               builder: (context, state) {
-                if (state is MascotaInProgress) {
+                if (state is TipoMascotaInProgress) {
                   return const Loader();
                 }
                 return Container();
@@ -256,13 +256,13 @@ class _MascotaBodyState extends State<MascotaBody> {
   }
 
   void _getMascotasList() {
-    context.read<MascotaBloc>().add(
+    context.read<TipoMascotaBloc>().add(
           MascotaShown(),
         );
   }
 
   void _saveNewMascota() {
-    context.read<MascotaBloc>().add(
+    context.read<TipoMascotaBloc>().add(
           MascotaSaved(
             name: _name.text,
           ),
@@ -270,7 +270,7 @@ class _MascotaBodyState extends State<MascotaBody> {
   }
 
   void _deleteMascota({required int id}) {
-    context.read<MascotaBloc>().add(
+    context.read<TipoMascotaBloc>().add(
           MascotaDeleted(
             mascotaId: id,
           ),
@@ -278,7 +278,7 @@ class _MascotaBodyState extends State<MascotaBody> {
   }
 
   void _editMascota({required int id}) {
-    context.read<MascotaBloc>().add(
+    context.read<TipoMascotaBloc>().add(
           MascotaEdited(
             id: id,
             name: _name.text,

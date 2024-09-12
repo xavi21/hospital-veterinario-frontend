@@ -1,24 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:paraiso_canino/factory/client_factory.dart';
-import 'package:paraiso_canino/mascota/model/mascota_list_model.dart';
+import 'package:paraiso_canino/tipoMascota/model/mascota_list_model.dart';
 import 'package:paraiso_canino/resources/api_constants.dart';
 
-class MascotaService {
+class TipoMascotaService {
   Dio client;
 
-  MascotaService() : client = ClientFactory.buildClient();
+  TipoMascotaService() : client = ClientFactory.buildClient();
 
-  MascotaService.withClient(
+  TipoMascotaService.withClient(
     this.client,
   );
 
-  Future<List<MascotaListModel>> getMascotas() async {
+  Future<List<TipoMascotaListModel>> getMascotas() async {
     final response = await client.get(
       getMascotasPath,
     );
-    return List<MascotaListModel>.from(
+    return List<TipoMascotaListModel>.from(
       response.data['data'].map(
-        (sucursal) => MascotaListModel.fromJson(sucursal),
+        (sucursal) => TipoMascotaListModel.fromJson(sucursal),
       ),
     );
   }

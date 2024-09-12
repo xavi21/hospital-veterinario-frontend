@@ -1,4 +1,4 @@
-class MascotaListModel {
+class TipoMascotaListModel {
   final String fechacreacion;
   final String usuariocreacion;
   final String fechamodificacion;
@@ -7,7 +7,7 @@ class MascotaListModel {
   final String nombre;
   bool isHover;
 
-  MascotaListModel({
+  TipoMascotaListModel({
     required this.fechacreacion,
     required this.usuariocreacion,
     required this.fechamodificacion,
@@ -17,8 +17,8 @@ class MascotaListModel {
     this.isHover = false,
   });
 
-  factory MascotaListModel.fromJson(Map<String, dynamic> json) =>
-      MascotaListModel(
+  factory TipoMascotaListModel.fromJson(Map<String, dynamic> json) =>
+      TipoMascotaListModel(
         fechacreacion: json["fechacreacion"],
         usuariocreacion: json["usuariocreacion"],
         fechamodificacion: json["fechamodificacion"],

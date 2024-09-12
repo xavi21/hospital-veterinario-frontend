@@ -1,35 +1,37 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
-import 'package:paraiso_canino/laboratorio/model/laboratorio_list_model.dart';
-import 'package:paraiso_canino/laboratorio/service/laboratorio_service.dart';
+import 'package:paraiso_canino/consulta/model/consulta_response.dart';
+import 'package:paraiso_canino/consulta/service/consulta_service.dart';
 import 'package:paraiso_canino/resources/constants.dart';
 
-part 'laboratorio_event.dart';
-part 'laboratorio_state.dart';
+part 'consulta_event.dart';
+part 'consulta_state.dart';
 
-class LaboratorioBloc extends Bloc<LaboratorioEvent, LaboratorioState> {
-  LaboratorioBloc() : super(LaboratorioInitial()) {
-    on<LaboratorioShown>(getLaboratorios);
-    on<LaboratorioSaved>(createLaboratorio);
-    on<LaboratorioEdited>(updateLaboratorio);
-    on<LaboratorioDeleted>(deleteLaboratorio);
+class ConsultaBloc extends Bloc<ConsultaEvent, ConsultaState> {
+  ConsultaBloc() : super(ConsultaInitial()) {
+    on<ConsultaShown>(getConsultas);
+    on<ConsultaSaved>(createConsulta);
+    on<ConsultaEdited>(updateConsulta);
+    on<ConsultaDeleted>(deleteConsulta);
   }
 
-  final LaboratorioService service = LaboratorioService();
+  final ConsultaService service = ConsultaService();
 
-  Future<void> getLaboratorios(
-    LaboratorioShown event,
+  Future<void> getConsultas(
+    ConsultaShown event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      LaboratorioInProgress(),
+      ConsultaInProgress(),
     );
     try {
-      final List<LaboratorioListModel> resp = await service.getLaboratorios();
+      final List<ConsultaListModel> resp = await service.getConsultas();
       emit(
-        LaboratorioSuccess(laboratorios: resp),
+        ConsultaSuccess(consultas: resp),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -40,7 +42,7 @@ class LaboratorioBloc extends Bloc<LaboratorioEvent, LaboratorioState> {
         );
       } else {
         emit(
-          LaboratorioError(
+          ConsultaError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -48,20 +50,22 @@ class LaboratorioBloc extends Bloc<LaboratorioEvent, LaboratorioState> {
     }
   }
 
-  Future<void> createLaboratorio(
-    LaboratorioSaved event,
+  Future<void> createConsulta(
+    ConsultaSaved event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      LaboratorioInProgress(),
+      ConsultaInProgress(),
     );
     try {
-      await service.createLaboratorio(
-        name: event.name,
-        descripcion: event.descripcion,
+      await service.createConsulta(
+        idcita: event.idcita,
+        idempleado: event.idempleado,
+        sintomas: event.sintomas,
+        diagnostico: event.diagnostico,
       );
       emit(
-        LaboratorioCreatedSuccess(),
+        ConsultaCreatedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -72,7 +76,7 @@ class LaboratorioBloc extends Bloc<LaboratorioEvent, LaboratorioState> {
         );
       } else {
         emit(
-          LaboratorioError(
+          ConsultaError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -80,21 +84,23 @@ class LaboratorioBloc extends Bloc<LaboratorioEvent, LaboratorioState> {
     }
   }
 
-  Future<void> updateLaboratorio(
-    LaboratorioEdited event,
+  Future<void> updateConsulta(
+    ConsultaEdited event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      LaboratorioInProgress(),
+      ConsultaInProgress(),
     );
     try {
-      await service.updateLaboratorio(
-        id: event.id,
-        name: event.name,
-        descripcion: event.descripcion,
+      await service.updateConsulta(
+        idConsulta: event.idconsulta,
+        idcita: event.idcita,
+        idempleado: event.idempleado,
+        sintomas: event.sintomas,
+        diagnostico: event.diagnostico,
       );
       emit(
-        LaboratorioEditedSuccess(),
+        ConsultaEditedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -105,7 +111,7 @@ class LaboratorioBloc extends Bloc<LaboratorioEvent, LaboratorioState> {
         );
       } else {
         emit(
-          LaboratorioError(
+          ConsultaError(
             message: error.response!.data[responseMessage],
           ),
         );
@@ -113,19 +119,19 @@ class LaboratorioBloc extends Bloc<LaboratorioEvent, LaboratorioState> {
     }
   }
 
-  Future<void> deleteLaboratorio(
-    LaboratorioDeleted event,
+  Future<void> deleteConsulta(
+    ConsultaDeleted event,
     Emitter<BaseState> emit,
   ) async {
     emit(
-      LaboratorioInProgress(),
+      ConsultaInProgress(),
     );
     try {
-      await service.deleteLaboratorio(
-        id: event.laboratorioId,
+      await service.deleteConsulta(
+        id: event.consultaID,
       );
       emit(
-        LaboratorioDeletedSuccess(),
+        ConsultaDeletedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||
@@ -136,7 +142,7 @@ class LaboratorioBloc extends Bloc<LaboratorioEvent, LaboratorioState> {
         );
       } else {
         emit(
-          LaboratorioError(
+          ConsultaError(
             message: error.response!.data[responseMessage],
           ),
         );

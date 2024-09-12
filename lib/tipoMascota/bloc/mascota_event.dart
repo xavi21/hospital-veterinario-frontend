@@ -1,15 +1,15 @@
 part of 'mascota_bloc.dart';
 
-abstract class MascotaEvent extends Equatable {
-  const MascotaEvent();
+abstract class TipoMascotaEvent extends Equatable {
+  const TipoMascotaEvent();
 
   @override
   List<Object> get props => [];
 }
 
-final class MascotaShown extends MascotaEvent {}
+final class MascotaShown extends TipoMascotaEvent {}
 
-final class MascotaSaved extends MascotaEvent {
+final class MascotaSaved extends TipoMascotaEvent {
   final String name;
 
   const MascotaSaved({
@@ -17,7 +17,7 @@ final class MascotaSaved extends MascotaEvent {
   });
 }
 
-final class MascotaEdited extends MascotaEvent {
+final class MascotaEdited extends TipoMascotaEvent {
   final int id;
   final String name;
 
@@ -27,7 +27,7 @@ final class MascotaEdited extends MascotaEvent {
   });
 }
 
-final class MascotaDeleted extends MascotaEvent {
+final class MascotaDeleted extends TipoMascotaEvent {
   final int mascotaId;
 
   const MascotaDeleted({
