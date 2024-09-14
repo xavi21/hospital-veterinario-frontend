@@ -1,4 +1,4 @@
-const String baseUrl = 'http://paraisocaninogt.com/';
+const String baseUrl = 'https://paraisocaninogt.com/';
 const String authPath = 'api/auth/signin';
 const String getMenuPath = 'api/menu/all';
 const String createMenuPath = 'api/menu/save';
@@ -48,3 +48,11 @@ const String getStatusEmpleadosPath = 'api/statusempleado/all';
 const String createStatusEmpleadoPath = 'api/statusempleado/save';
 const String updateStatusEmpleadoPath = 'api/statusempleado/update';
 const String deleteStatusEmpleadoPath = 'api/statusempleado/eliminar';
+const String getPersonasPath = '/api/persona/all';
+const String createPersonaPath = 'api/persona/save';
+const String updatePersonaPath = 'api/persona/update';
+const String deletePersonaPath = 'api/persona/eliminar';
+const String getJaulasPath = '/api/jaula/all';
+const String createJaulaPath = 'api/jaula/save';
+const String updateJaulaPath = 'api/jaula/update';
+const String deleteJaulaPath = 'api/jaula/eliminar';
