@@ -2,41 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:paraiso_canino/common/validation/validate_input.dart';
 import 'package:paraiso_canino/resources/colors.dart';
 
-class CustomInput extends StatefulWidget {
+class CustomTextArea extends StatefulWidget {
   final TextEditingController controller;
   final TextInputType textInputType;
-  final bool isPassword;
   final bool isRequired;
-  final bool isEnabled;
   final TextInputAction textInputAction;
   final Function(String)? onFieldSubmitted;
   final String? Function(String?)? validator;
   final String labelText;
 
-  const CustomInput({
+  const CustomTextArea({
     super.key,
     required this.controller,
     required this.labelText,
     this.textInputType = TextInputType.text,
-    this.isPassword = false,
     this.isRequired = false,
-    this.isEnabled = true,
     this.textInputAction = TextInputAction.next,
     this.onFieldSubmitted,
     this.validator,
   });
 
   @override
-  State<CustomInput> createState() => _CustomInputState();
+  State<CustomTextArea> createState() => _CustomTextAreaState();
 }
 
-class _CustomInputState extends State<CustomInput> {
-  bool isObscureText = true;
-
-  void _handleEnableVisibility() => setState(
-        () => isObscureText = !isObscureText,
-      );
-
+class _CustomTextAreaState extends State<CustomTextArea> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,14 +34,17 @@ class _CustomInputState extends State<CustomInput> {
       children: [
         Text(
           widget.labelText,
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: Theme.of(context).textTheme.displayMedium,
+        ),
+        const SizedBox(
+          height: 12.0,
         ),
         TextFormField(
+          minLines: 6,
+          maxLines: null,
           controller: widget.controller,
-          enabled: widget.isEnabled,
           onFieldSubmitted: widget.onFieldSubmitted,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          obscureText: widget.isPassword ? isObscureText : false,
           keyboardType: widget.textInputType,
           cursorColor: blue,
           validator: (String? value) {
@@ -64,31 +57,20 @@ class _CustomInputState extends State<CustomInput> {
             return null;
           },
           decoration: InputDecoration(
-            suffixIcon: widget.isPassword
-                ? GestureDetector(
-                    onTap: _handleEnableVisibility,
-                    child: Icon(
-                      isObscureText
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                      color: blue,
-                      size: 20.0,
-                    ),
-                  )
-                : null,
+            fillColor: fillInputSelect,
             errorStyle: const TextStyle(
               fontSize: 12.0,
               color: error,
             ),
             contentPadding: const EdgeInsets.symmetric(
-              vertical: 14.0,
-              horizontal: 12.0,
+              vertical: 18.0,
+              horizontal: 40.0,
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(32.0),
               borderSide: const BorderSide(
                 color: inputBorder,
-                width: 1.0,
+                width: 2.0,
               ),
             ),
             errorBorder: OutlineInputBorder(
@@ -97,7 +79,7 @@ class _CustomInputState extends State<CustomInput> {
               ),
               borderSide: const BorderSide(
                 color: error,
-                width: 1.0,
+                width: 2.0,
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -106,7 +88,7 @@ class _CustomInputState extends State<CustomInput> {
               ),
               borderSide: const BorderSide(
                 color: inputBorder,
-                width: 1.0,
+                width: 2.0,
               ),
             ),
           ),

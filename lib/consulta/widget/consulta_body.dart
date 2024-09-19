@@ -9,6 +9,7 @@ import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
 import 'package:paraiso_canino/consulta/bloc/consulta_bloc.dart';
 import 'package:paraiso_canino/consulta/model/consulta_response.dart';
+import 'package:paraiso_canino/detalle_consulta/detalle_consulta_page.dart';
 import 'package:paraiso_canino/resources/colors.dart';
 
 class ConsultaBody extends StatefulWidget {
@@ -111,7 +112,12 @@ class _ConsultaBodyState extends State<ConsultaBody> {
                   _sintomas.clear();
                   _diagnostico.clear();
                 });
-                _scaffoldKey.currentState!.openEndDrawer();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const DetalleConsultaPage(),
+                  ),
+                );
+                // _scaffoldKey.currentState!.openEndDrawer();
               },
               headers: const [
                 'iD',
