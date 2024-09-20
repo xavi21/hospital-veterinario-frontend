@@ -120,12 +120,14 @@ class _ConsultaBodyState extends State<ConsultaBody> {
                 // _scaffoldKey.currentState!.openEndDrawer();
               },
               headers: const [
-                'iD',
-                'Nombre consulta',
-                'Fecha creación',
-                'Fecha modificación',
-                'Usuario creador',
-                'Usuario modificador',
+                'ID Cita',
+                'ID Consulta',
+                'Nombre mascota',
+                'Motivo',
+                'ID Empleado',
+                'Empleado',
+                'Sintomas',
+                'Diagnostico',
                 '',
               ],
               rows: consultas.map<Widget>((consulta) {
@@ -144,33 +146,42 @@ class _ConsultaBodyState extends State<ConsultaBody> {
                       children: [
                         Expanded(
                           child: Text(
-                            '${consulta.idConsulta}',
+                            '${consulta.idcita}',
                             textAlign: TextAlign.center,
                           ),
                         ),
                         Expanded(
-                          child: Text(consulta.nombre),
+                          child: Text(
+                            '${consulta.idconsulta}',
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                         Expanded(
-                          child: Text(consulta.fechacreacion),
+                          child: Text(consulta.nombreMascota),
                         ),
                         Expanded(
-                          child: Text(consulta.fechamodificacion),
+                          child: Text(consulta.motivo),
                         ),
                         Expanded(
-                          child: Text(consulta.usuariocreacion),
+                          child: Text(
+                            '${consulta.idempleado}',
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                         Expanded(
-                          child: Text(consulta.usuariomodificacion),
+                          child: Text(
+                            '${consulta.nombreEmpleado} ${consulta.apellidoEmpleado}',
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(consulta.sintomas),
+                        ),
+                        Expanded(
+                          child: Text(consulta.diagnostico),
                         ),
                         PopupMenuButton(
                           color: white,
                           onSelected: (value) {
-                            if (value == TableRowActions.delete) {
-                              _deleteConsulta(
-                                id: consulta.idConsulta,
-                              );
-                            }
                             if (value == TableRowActions.edit) {
                               setState(() {
                                 _isEdit = true;
@@ -178,7 +189,7 @@ class _ConsultaBodyState extends State<ConsultaBody> {
                                 _idEmpleado.text = 'consulta';
                                 _sintomas.text = 'consulta';
                                 _diagnostico.text = 'consulta';
-                                _consultaId = consulta.idConsulta;
+                                // _consultaId = consulta.idConsulta;
                               });
                               _scaffoldKey.currentState!.openEndDrawer();
                             }
@@ -188,10 +199,6 @@ class _ConsultaBodyState extends State<ConsultaBody> {
                               PopupMenuItem(
                                 value: TableRowActions.edit,
                                 child: Text('Editar'),
-                              ),
-                              PopupMenuItem(
-                                value: TableRowActions.delete,
-                                child: Text('Eliminar'),
                               ),
                             ];
                           },
@@ -283,7 +290,7 @@ class _ConsultaBodyState extends State<ConsultaBody> {
     setState(() {
       consultas = consultas
           .where(
-            (element) => element.nombre.toLowerCase().contains(
+            (element) => element.nombreEmpleado.toLowerCase().contains(
                   _searchConsulta.text.toLowerCase(),
                 ),
           )
@@ -304,14 +311,6 @@ class _ConsultaBodyState extends State<ConsultaBody> {
             idempleado: int.parse(_idEmpleado.text),
             sintomas: _sintomas.text,
             diagnostico: _diagnostico.text,
-          ),
-        );
-  }
-
-  void _deleteConsulta({required int id}) {
-    context.read<ConsultaBloc>().add(
-          ConsultaDeleted(
-            consultaID: id,
           ),
         );
   }

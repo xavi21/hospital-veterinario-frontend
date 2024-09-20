@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paraiso_canino/cita/model/cita_list_model.dart';
+import 'package:paraiso_canino/cita/model/mascota_list_model.dart';
+import 'package:paraiso_canino/cita/model/status_cita_list_model.dart';
 import 'package:paraiso_canino/cita/service/cita_service.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
 import 'package:paraiso_canino/resources/constants.dart';
@@ -12,6 +14,8 @@ part 'cita_state.dart';
 class CitaBloc extends Bloc<CitaEvent, CitaState> {
   CitaBloc() : super(CitaInitial()) {
     on<CitaShown>(getCitas);
+    on<MascotaListShown>(getMascotas);
+    on<StatusCitaListShown>(getStatusCitas);
     on<CitaSaved>(createCita);
     on<CitaEdited>(updateCita);
     on<CitaDeleted>(deleteCita);
@@ -48,6 +52,64 @@ class CitaBloc extends Bloc<CitaEvent, CitaState> {
     }
   }
 
+  Future<void> getStatusCitas(
+    StatusCitaListShown event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      CitaInProgress(),
+    );
+    try {
+      final List<StatusCitaListModel> resp = await service.getStatusCitas();
+      emit(
+        StatucCitaSuccess(statusCitas: resp),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          CitaError(
+            message: error.response!.data[responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> getMascotas(
+    MascotaListShown event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      CitaInProgress(),
+    );
+    try {
+      final List<MascotaListModel> resp = await service.getMascotas();
+      emit(
+        MascotaSuccess(mascotas: resp),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          CitaError(
+            message: error.response!.data[responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> createCita(
     CitaSaved event,
     Emitter<BaseState> emit,
@@ -57,7 +119,9 @@ class CitaBloc extends Bloc<CitaEvent, CitaState> {
     );
     try {
       await service.createCita(
-        name: event.name,
+        idMascota: event.idMascota,
+        idStatusCita: event.idStatusCita,
+        motivo: event.motivo,
       );
       emit(
         CitaCreatedSuccess(),
@@ -88,8 +152,10 @@ class CitaBloc extends Bloc<CitaEvent, CitaState> {
     );
     try {
       await service.updateCita(
-        id: event.id,
-        name: event.name,
+        idCita: event.idCita,
+        idMascota: event.idMascota,
+        idStatusCita: event.idStatusCita,
+        motivo: event.motivo,
       );
       emit(
         CitaEditedSuccess(),

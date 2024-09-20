@@ -1,29 +1,53 @@
 class ConsultaListModel {
-  final String fechacreacion;
-  final String usuariocreacion;
-  final String fechamodificacion;
+  final int idcita;
   final String usuariomodificacion;
-  final int idConsulta;
-  final String nombre;
+  final String fechamodificacion;
+  final String fechahora;
+  final String nombreMascota;
+  final String motivo;
+  final String usuariocreacion;
+  final String fechacreacion;
+  final int idconsulta;
+  final int idempleado;
+  final String nombreEmpleado;
+  final String apellidoEmpleado;
+  final String sintomas;
+  final String diagnostico;
   bool isHover;
 
   ConsultaListModel({
-    required this.fechacreacion,
-    required this.usuariocreacion,
-    required this.fechamodificacion,
+    required this.idcita,
     required this.usuariomodificacion,
-    required this.idConsulta,
-    required this.nombre,
+    required this.fechamodificacion,
+    required this.fechahora,
+    required this.nombreMascota,
+    required this.motivo,
+    required this.usuariocreacion,
+    required this.fechacreacion,
+    required this.idconsulta,
+    required this.idempleado,
+    required this.nombreEmpleado,
+    required this.apellidoEmpleado,
+    required this.sintomas,
+    required this.diagnostico,
     this.isHover = false,
   });
 
   factory ConsultaListModel.fromJson(Map<String, dynamic> json) =>
       ConsultaListModel(
-        fechacreacion: json["fechacreacion"],
-        usuariocreacion: json["usuariocreacion"],
-        fechamodificacion: json["fechamodificacion"],
+        idcita: json["idcita"],
         usuariomodificacion: json["usuariomodificacion"],
-        idConsulta: json["idConsulta"],
-        nombre: json["nombre"],
+        fechamodificacion: json["fechamodificacion"],
+        fechahora: json["fechahora"],
+        nombreMascota: json["nombre_mascota"],
+        motivo: json["motivo"],
+        usuariocreacion: json["usuariocreacion"],
+        fechacreacion: json["fechacreacion"],
+        idconsulta: json["idconsulta"],
+        idempleado: json["idempleado"],
+        nombreEmpleado: json["nombre_empleado"],
+        apellidoEmpleado: json["apellido_empleado"],
+        sintomas: json["sintomas"],
+        diagnostico: json["diagnostico"],
       );
 }

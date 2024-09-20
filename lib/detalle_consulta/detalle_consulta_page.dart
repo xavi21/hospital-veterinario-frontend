@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paraiso_canino/detalle_consulta/bloc/detalleconsulta_bloc.dart';
 import 'package:paraiso_canino/detalle_consulta/widget/detalle_consulta_body.dart';
 
 class DetalleConsultaPage extends StatelessWidget {
@@ -6,6 +8,9 @@ class DetalleConsultaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const DetalleConsultaBody();
+    return BlocProvider<DetalleconsultaBloc>(
+      create: (context) => DetalleconsultaBloc(),
+      child: const DetalleConsultaBody(),
+    );
   }
 }

@@ -1,28 +1,43 @@
 class CitaListModel {
-  final String fechacreacion;
-  final String usuariocreacion;
-  final String fechamodificacion;
+  final int idcita;
+  final String nombreStatusCita;
   final String usuariomodificacion;
-  final int idestatuscita;
-  final String nombre;
+  final String fechamodificacion;
+  final String fechahora;
+  final int idmascota;
+  final String nombreMascota;
+  final int idstatuscita;
+  final String motivo;
+  final String usuariocreacion;
+  final String fechacreacion;
   bool isHover;
 
   CitaListModel({
-    required this.fechacreacion,
-    required this.usuariocreacion,
-    required this.fechamodificacion,
+    required this.idcita,
+    required this.nombreStatusCita,
     required this.usuariomodificacion,
-    required this.idestatuscita,
-    required this.nombre,
+    required this.fechamodificacion,
+    required this.fechahora,
+    required this.idmascota,
+    required this.nombreMascota,
+    required this.idstatuscita,
+    required this.motivo,
+    required this.usuariocreacion,
+    required this.fechacreacion,
     this.isHover = false,
   });
 
   factory CitaListModel.fromJson(Map<String, dynamic> json) => CitaListModel(
-        fechacreacion: json["fechacreacion"],
-        usuariocreacion: json["usuariocreacion"],
-        fechamodificacion: json["fechamodificacion"],
+        idcita: json["idcita"],
+        nombreStatusCita: json["nombre_status_cita"],
         usuariomodificacion: json["usuariomodificacion"],
-        idestatuscita: json["idestatuscita"],
-        nombre: json["nombre"],
+        fechamodificacion: json["fechamodificacion"],
+        fechahora: json["fechahora"],
+        idmascota: json["idmascota"],
+        nombreMascota: json["nombre_mascota"],
+        idstatuscita: json["idstatuscita"],
+        motivo: json["motivo"],
+        usuariocreacion: json["usuariocreacion"],
+        fechacreacion: json["fechacreacion"],
       );
 }

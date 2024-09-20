@@ -164,9 +164,6 @@ class _SucursalBodyState extends State<SucursalBody> {
                         PopupMenuButton(
                           color: white,
                           onSelected: (value) {
-                            if (value == TableRowActions.see) {
-                              _showGoogleMapLocation();
-                            }
                             if (value == TableRowActions.delete) {
                               _deleteSucursal(
                                 id: sucursal.idsucursal,
@@ -184,10 +181,6 @@ class _SucursalBodyState extends State<SucursalBody> {
                           },
                           itemBuilder: (context) {
                             return const [
-                              PopupMenuItem(
-                                value: TableRowActions.see,
-                                child: Text('Ver'),
-                              ),
                               PopupMenuItem(
                                 value: TableRowActions.edit,
                                 child: Text('Editar'),
@@ -263,17 +256,6 @@ class _SucursalBodyState extends State<SucursalBody> {
               )
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  void _showGoogleMapLocation() {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        child: Center(
-          child: Text('Dialogo'),
         ),
       ),
     );

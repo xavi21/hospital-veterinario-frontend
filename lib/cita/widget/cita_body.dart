@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paraiso_canino/cita/bloc/cita_bloc.dart';
 import 'package:paraiso_canino/cita/model/cita_list_model.dart';
+import 'package:paraiso_canino/cita/model/mascota_list_model.dart';
+import 'package:paraiso_canino/cita/model/status_cita_list_model.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
 import 'package:paraiso_canino/common/button/custom_button.dart';
 import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
 import 'package:paraiso_canino/common/enum/action_emum.dart';
-import 'package:paraiso_canino/common/input/custom_input.dart';
+import 'package:paraiso_canino/common/input/custom_input_select.dart';
+import 'package:paraiso_canino/common/input/custom_text_area.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
 import 'package:paraiso_canino/resources/colors.dart';
@@ -21,20 +24,30 @@ class CitaBody extends StatefulWidget {
 class _CitaBodyState extends State<CitaBody> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
-  final TextEditingController _name = TextEditingController();
+  final TextEditingController _idMascota = TextEditingController();
+  final TextEditingController _idStatusCita = TextEditingController();
+  final TextEditingController _motivo = TextEditingController();
   final TextEditingController _searchCitas = TextEditingController();
 
   late List<CitaListModel> citas;
+  late List<StatusCitaListModel> statusCitas;
+  late List<MascotaListModel> mascotas;
 
   late bool _isEdit;
-  late int _ciaId;
+  late int _citaId;
+
+  late String _selectedMascotaId;
+  late String _selectedStatusCitaId;
 
   @override
   void initState() {
     _isEdit = false;
     citas = [];
-    super.initState();
+    mascotas = [];
+    statusCitas = [];
     _getCitasList();
+    _getFormLists();
+    super.initState();
   }
 
   @override
@@ -49,6 +62,14 @@ class _CitaBodyState extends State<CitaBody> {
             case const (CitaSuccess):
               final loadedState = state as CitaSuccess;
               setState(() => citas = loadedState.citas);
+              break;
+            case const (StatucCitaSuccess):
+              final loadedState = state as StatucCitaSuccess;
+              setState(() => statusCitas = loadedState.statusCitas);
+              break;
+            case const (MascotaSuccess):
+              final loadedState = state as MascotaSuccess;
+              setState(() => mascotas = loadedState.mascotas);
               break;
             case const (CitaCreatedSuccess):
               _getCitasList();
@@ -103,17 +124,18 @@ class _CitaBodyState extends State<CitaBody> {
               onTapAddButton: () {
                 setState(() {
                   _isEdit = false;
-                  _name.clear();
+                  _idMascota.clear();
+                  _idStatusCita.clear();
+                  _motivo.clear();
                 });
                 _scaffoldKey.currentState!.openEndDrawer();
               },
               headers: const [
-                'idestatuscita',
-                'nombre',
-                'fechacreacion',
-                'fechamodificacion',
-                'usuariocreacion',
-                'usuariomodificacion',
+                'ID Cita',
+                'Estatus cita',
+                'ID Mascota',
+                'Nombre mascota',
+                'Motivo',
                 '',
               ],
               rows: citas.map<Widget>((cita) {
@@ -132,38 +154,40 @@ class _CitaBodyState extends State<CitaBody> {
                       children: [
                         Expanded(
                           child: Text(
-                            '${cita.idestatuscita}',
+                            '${cita.idcita}',
                             textAlign: TextAlign.center,
                           ),
                         ),
                         Expanded(
-                          child: Text(cita.nombre),
+                          child: Text(cita.nombreStatusCita),
                         ),
                         Expanded(
-                          child: Text(cita.fechacreacion),
+                          child: Text(
+                            '${cita.idmascota}',
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                         Expanded(
-                          child: Text(cita.fechamodificacion),
+                          child: Text(cita.nombreMascota),
                         ),
                         Expanded(
-                          child: Text(cita.usuariocreacion),
-                        ),
-                        Expanded(
-                          child: Text(cita.usuariomodificacion),
+                          child: Text(cita.motivo),
                         ),
                         PopupMenuButton(
                           color: white,
                           onSelected: (value) {
                             if (value == TableRowActions.delete) {
                               _deleteCita(
-                                id: cita.idestatuscita,
+                                id: cita.idcita,
                               );
                             }
                             if (value == TableRowActions.edit) {
                               setState(() {
                                 _isEdit = true;
-                                _name.text = cita.nombre;
-                                _ciaId = cita.idestatuscita;
+                                _idMascota.text = cita.nombreMascota;
+                                _idStatusCita.text = cita.nombreStatusCita;
+                                _motivo.text = cita.motivo;
+                                _citaId = cita.idcita;
                               });
                               _scaffoldKey.currentState!.openEndDrawer();
                             }
@@ -217,9 +241,42 @@ class _CitaBodyState extends State<CitaBody> {
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 20.0),
-              CustomInput(
-                labelText: 'Nombre',
-                controller: _name,
+              CustomInputSelect(
+                title: 'Mascota',
+                hint: 'Selecciona una mascota',
+                valueItems: mascotas
+                    .map<String>((mascota) => mascota.idmascota.toString())
+                    .toList(),
+                displayItems: mascotas
+                    .map<String>((mascota) => mascota.nombreMascota)
+                    .toList(),
+                onSelected: (String? mascotaId) {
+                  setState(() {
+                    _selectedMascotaId = mascotaId!;
+                  });
+                },
+                controller: _idMascota,
+              ),
+              const SizedBox(height: 12.0),
+              CustomInputSelect(
+                title: 'Estado Cita',
+                hint: 'Selecciona un estado',
+                valueItems: statusCitas
+                    .map<String>((status) => status.idestatuscita.toString())
+                    .toList(),
+                displayItems:
+                    statusCitas.map<String>((status) => status.nombre).toList(),
+                onSelected: (String? statusId) {
+                  setState(() {
+                    _selectedStatusCitaId = statusId!;
+                  });
+                },
+                controller: _idStatusCita,
+              ),
+              const SizedBox(height: 12.0),
+              CustomTextArea(
+                labelText: 'Motivo',
+                controller: _motivo,
                 isRequired: true,
               ),
               const SizedBox(height: 12.0),
@@ -228,7 +285,7 @@ class _CitaBodyState extends State<CitaBody> {
                   if (_form.currentState!.validate()) {
                     Navigator.pop(context);
                     if (_isEdit) {
-                      _updateCita(id: _ciaId);
+                      _updateCita(id: _citaId);
                     } else {
                       _createNewCita();
                     }
@@ -247,12 +304,22 @@ class _CitaBodyState extends State<CitaBody> {
     setState(() {
       citas = citas
           .where(
-            (element) => element.nombre.toLowerCase().contains(
+            (element) => element.nombreMascota.toLowerCase().contains(
                   _searchCitas.text.toLowerCase(),
                 ),
           )
           .toList();
     });
+  }
+
+  void _getFormLists() {
+    context.read<CitaBloc>()
+      ..add(
+        StatusCitaListShown(),
+      )
+      ..add(
+        MascotaListShown(),
+      );
   }
 
   void _getCitasList() {
@@ -264,7 +331,9 @@ class _CitaBodyState extends State<CitaBody> {
   void _createNewCita() {
     context.read<CitaBloc>().add(
           CitaSaved(
-            name: _name.text,
+            idMascota: int.parse(_selectedMascotaId),
+            idStatusCita: int.parse(_selectedStatusCitaId),
+            motivo: _motivo.text,
           ),
         );
   }
@@ -280,8 +349,10 @@ class _CitaBodyState extends State<CitaBody> {
   void _updateCita({required int id}) {
     context.read<CitaBloc>().add(
           CitaEdited(
-            id: id,
-            name: _name.text,
+            idCita: _citaId,
+            idMascota: int.parse(_selectedMascotaId),
+            idStatusCita: int.parse(_selectedStatusCitaId),
+            motivo: _motivo.text,
           ),
         );
   }

@@ -14,6 +14,22 @@ final class CitaSuccess extends CitaState {
   });
 }
 
+final class MascotaSuccess extends CitaState {
+  final List<MascotaListModel> mascotas;
+
+  MascotaSuccess({
+    required this.mascotas,
+  });
+}
+
+final class StatucCitaSuccess extends CitaState {
+  final List<StatusCitaListModel> statusCitas;
+
+  StatucCitaSuccess({
+    required this.statusCitas,
+  });
+}
+
 final class CitaCreatedSuccess extends CitaState {}
 
 final class CitaEditedSuccess extends CitaState {}

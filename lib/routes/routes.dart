@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paraiso_canino/ambulancia/ambulancia_page.dart';
 import 'package:paraiso_canino/cita/cita_page.dart';
 import 'package:paraiso_canino/color/color_page.dart';
 import 'package:paraiso_canino/consulta/consulta_page.dart';
@@ -22,7 +23,7 @@ final Map<String, Widget> routes = {
   'Sucursal': const SucursalPage(),
   'StatusUsuario': const StatusUsuarioPage(),
   'StatusEmpleado': const StatusEmpleadoPage(),
-  'Ambulancias': Container(), //1
+  'Ambulancia': const AmbulanciaPage(), //1
   'Talla': const TallaPage(),
   'Jaula': const JaulaPage(),
   'TipoMascota': Container(), // 2

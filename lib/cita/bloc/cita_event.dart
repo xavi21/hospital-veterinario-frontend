@@ -9,21 +9,33 @@ abstract class CitaEvent extends Equatable {
 
 final class CitaShown extends CitaEvent {}
 
+final class MascotaListShown extends CitaEvent {}
+
+final class StatusCitaListShown extends CitaEvent {}
+
 final class CitaSaved extends CitaEvent {
-  final String name;
+  final int idMascota;
+  final int idStatusCita;
+  final String motivo;
 
   const CitaSaved({
-    required this.name,
+    required this.idMascota,
+    required this.idStatusCita,
+    required this.motivo,
   });
 }
 
 final class CitaEdited extends CitaEvent {
-  final int id;
-  final String name;
+  final int idCita;
+  final int idMascota;
+  final int idStatusCita;
+  final String motivo;
 
   const CitaEdited({
-    required this.id,
-    required this.name,
+    required this.idCita,
+    required this.idMascota,
+    required this.idStatusCita,
+    required this.motivo,
   });
 }
 

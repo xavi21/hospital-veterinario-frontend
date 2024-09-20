@@ -14,7 +14,7 @@ class TipoMascotaService {
 
   Future<List<TipoMascotaListModel>> getMascotas() async {
     final response = await client.get(
-      getMascotasPath,
+      getTipoMascotasPath,
     );
     return List<TipoMascotaListModel>.from(
       response.data['data'].map(
@@ -27,7 +27,7 @@ class TipoMascotaService {
     required String name,
   }) async {
     return await client.post(
-      createMascotaPath,
+      createTipoMascotaPath,
       data: {
         'nombre': name,
       },
@@ -39,7 +39,7 @@ class TipoMascotaService {
     required String name,
   }) async {
     return await client.put(
-      updateMascotaPath,
+      updateTipoMascotaPath,
       data: {
         'idTipoMascota': id,
         'nombre': name,
@@ -51,7 +51,7 @@ class TipoMascotaService {
     required int id,
   }) async {
     return await client.delete(
-      deleteMascotaPath,
+      deleteTipoMascotaPath,
       queryParameters: {
         'id': id,
       },
