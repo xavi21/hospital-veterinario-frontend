@@ -1,50 +1,56 @@
 class PersonaListModel {
-  final String fechacreacion;
-  final String usuariocreacion;
-  final String fechamodificacion;
   final String usuariomodificacion;
-  final int idPersona;
+  final String fechamodificacion;
+  final String usuariocreacion;
+  final String fechacreacion;
+  final String fechanacimiento;
+  final String nombreEstadoCivil;
+  final int idGenero;
+  final int idpersona;
+  final String nombreGenero;
   final String nombre;
   final String apellido;
-  final String fechaNacimiento;
-  final int idGenero;
-  final String direccion;
   final String telefono;
-  final String correoElectronico;
+  final String direccion;
+  final String correoelectronico;
   final int idEstadoCivil;
   bool isHover;
 
   PersonaListModel({
-    required this.fechacreacion,
-    required this.usuariocreacion,
-    required this.fechamodificacion,
     required this.usuariomodificacion,
-    required this.idPersona,
+    required this.fechamodificacion,
+    required this.usuariocreacion,
+    required this.fechacreacion,
+    required this.fechanacimiento,
+    required this.nombreEstadoCivil,
+    required this.idGenero,
+    required this.idpersona,
+    required this.nombreGenero,
     required this.nombre,
     required this.apellido,
-    required this.fechaNacimiento,
-    required this.idGenero,
-    required this.direccion,
     required this.telefono,
-    required this.correoElectronico,
+    required this.direccion,
+    required this.correoelectronico,
     required this.idEstadoCivil,
     this.isHover = false,
   });
 
   factory PersonaListModel.fromJson(Map<String, dynamic> json) =>
       PersonaListModel(
-        fechacreacion: json['fechacreacion'],
-        usuariocreacion: json['usuariocreacion'],
-        fechamodificacion: json['fechamodificacion'],
-        usuariomodificacion: json['usuariomodificacion'],
-        idPersona: json['idPersona'],
-        nombre: json['nombre'],
-        apellido: json['apellido'],
-        fechaNacimiento: json['fechaNacimiento'],
-        idGenero: json['idGenero'],
-        direccion: json['direccion'],
-        telefono: json['telefono'],
-        correoElectronico: json['correoElectronico'],
-        idEstadoCivil: json['idEstadoCivil'],
+        usuariomodificacion: json["usuariomodificacion"],
+        fechamodificacion: json["fechamodificacion"],
+        usuariocreacion: json["usuariocreacion"],
+        fechacreacion: json["fechacreacion"],
+        fechanacimiento: json["fechanacimiento"],
+        nombreEstadoCivil: json["nombre_estado_civil"],
+        idGenero: json["id_genero"],
+        idpersona: json["idpersona"],
+        nombreGenero: json["nombre_genero"],
+        nombre: json["nombre"],
+        apellido: json["apellido"],
+        telefono: json["telefono"],
+        direccion: json["direccion"],
+        correoelectronico: json["correoelectronico"],
+        idEstadoCivil: json["id_estado_civil"],
       );
 }

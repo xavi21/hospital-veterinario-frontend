@@ -124,14 +124,14 @@ class _PersonaBodyState extends State<PersonaBody> {
                 _scaffoldKey.currentState!.openEndDrawer();
               },
               headers: const [
-                'iD',
-                'Nombre persona',
+                'ID',
+                'Nombre',
+                'Apellido',
+                'Telefono',
                 'Dirección',
-                'Usuario',
-                'Fecha creación',
-                'Fecha modificación',
-                'Usuario creador',
-                'Usuario modificador',
+                'Correo electrónico',
+                'Estado Civil',
+                'Género',
                 '',
               ],
               rows: personas.map<Widget>((persona) {
@@ -150,7 +150,7 @@ class _PersonaBodyState extends State<PersonaBody> {
                       children: [
                         Expanded(
                           child: Text(
-                            '${persona.idPersona}',
+                            '${persona.idpersona}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -158,41 +158,47 @@ class _PersonaBodyState extends State<PersonaBody> {
                           child: Text(persona.nombre),
                         ),
                         Expanded(
-                          child: Text(persona.fechacreacion),
+                          child: Text(persona.apellido),
                         ),
                         Expanded(
-                          child: Text(persona.fechamodificacion),
+                          child: Text(persona.telefono),
                         ),
                         Expanded(
-                          child: Text(persona.usuariocreacion),
+                          child: Text(persona.direccion),
                         ),
                         Expanded(
-                          child: Text(persona.usuariomodificacion),
+                          child: Text(persona.correoelectronico),
+                        ),
+                        Expanded(
+                          child: Text(persona.nombreEstadoCivil),
+                        ),
+                        Expanded(
+                          child: Text(persona.nombreGenero),
                         ),
                         PopupMenuButton(
                           color: white,
                           onSelected: (value) {
                             if (value == TableRowActions.delete) {
                               _deletePersona(
-                                id: persona.idPersona,
+                                id: persona.idpersona,
                               );
                             }
                             if (value == TableRowActions.edit) {
                               setState(() {
                                 _isEdit = true;
                                 _isEdit = false;
-                                _idpersona.text = persona.idPersona.toString();
+                                _idpersona.text = persona.idpersona.toString();
                                 _nombre.text = persona.nombre;
                                 _apellido.text = persona.apellido;
-                                _fechanacimiento.text = persona.fechaNacimiento;
+                                _fechanacimiento.text = persona.fechanacimiento;
                                 _idGenero.text = persona.idGenero.toString();
                                 _direccion.text = persona.direccion;
                                 _telefono.text = persona.telefono;
                                 _correoelectronico.text =
-                                    persona.correoElectronico;
+                                    persona.correoelectronico;
                                 _idEstadoCivil.text =
                                     persona.idEstadoCivil.toString();
-                                _personaId = persona.idPersona;
+                                _personaId = persona.idpersona;
                               });
                               _scaffoldKey.currentState!.openEndDrawer();
                             }
