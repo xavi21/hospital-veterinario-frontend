@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:paraiso_canino/factory/client_factory.dart';
+import 'package:paraiso_canino/opcion_usuario/model/menu_model.dart';
 import 'package:paraiso_canino/opcion_usuario/model/opcion_usuario_model.dart';
+import 'package:paraiso_canino/opcion_usuario/model/opciones_list_model.dart';
 import 'package:paraiso_canino/resources/api_constants.dart';
 
 class OpcioneUsuarioService {
@@ -11,6 +13,28 @@ class OpcioneUsuarioService {
   OpcioneUsuarioService.withClient(
     this.client,
   );
+
+  Future<List<OpcionesListModel>> getOptionsList() async {
+    final resp = await client.get(
+      getOptionsPath,
+    );
+    return List<OpcionesListModel>.from(
+      resp.data['data'].map(
+        (option) => OpcionesListModel.fromJson(option),
+      ),
+    );
+  }
+
+  Future<List<MenuModel>> getMenuList() async {
+    final response = await client.get(
+      getMenuPath,
+    );
+    return List<MenuModel>.from(
+      response.data['data'].map(
+        (menu) => MenuModel.fromJson(menu),
+      ),
+    );
+  }
 
   Future<List<OpcionUsuarioModel>> getOptions() async {
     final resp = await client.get(

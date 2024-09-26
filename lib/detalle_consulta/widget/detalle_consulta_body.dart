@@ -7,15 +7,20 @@ import 'package:paraiso_canino/common/form/custom_form.dart';
 import 'package:paraiso_canino/common/input/custom_input_select.dart';
 import 'package:paraiso_canino/common/input/custom_text_area.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
+import 'package:paraiso_canino/consulta/model/consulta_response.dart';
 import 'package:paraiso_canino/consulta_laboratorio/consulta_laboratorio_page.dart';
 import 'package:paraiso_canino/detalle_consulta/bloc/detalleconsulta_bloc.dart';
-import 'package:paraiso_canino/receta/receta_page.dart';
 import 'package:paraiso_canino/detalle_consulta/model/cita_list_model.dart';
 import 'package:paraiso_canino/detalle_consulta/model/empleado_list_model.dart';
+import 'package:paraiso_canino/receta/receta_page.dart';
 import 'package:paraiso_canino/resources/colors.dart';
 
 class DetalleConsultaBody extends StatefulWidget {
-  const DetalleConsultaBody({super.key});
+  final ConsultaListModel? arguments;
+  const DetalleConsultaBody({
+    super.key,
+    this.arguments,
+  });
 
   @override
   State<DetalleConsultaBody> createState() => _DetalleConsultaBodyState();
@@ -27,15 +32,20 @@ class _DetalleConsultaBodyState extends State<DetalleConsultaBody> {
   final TextEditingController _sintomaController = TextEditingController();
   final TextEditingController _diagnosticoController = TextEditingController();
 
-  List<CitaListModel> _citasList = [];
-  List<EmpeladoListModel> _empleadosList = [];
+  List<CitaModel> _citasList = [];
+  List<EmpleadoModel> _empleadosList = [];
 
   late String _selectedCitaId;
   late String _selectedEmpleadoId;
+  int? _consultaId;
 
   @override
   void initState() {
-    _getInitConfigs();
+    if (widget.arguments == null) {
+      _getInitialList();
+    } else {
+      _setInitalValues();
+    }
     super.initState();
   }
 
@@ -53,6 +63,24 @@ class _DetalleConsultaBodyState extends State<DetalleConsultaBody> {
             case const (DetalleconsultaEmpleadoListSuccess):
               final loadedState = state as DetalleconsultaEmpleadoListSuccess;
               setState(() => _empleadosList = loadedState.empleados);
+              break;
+            case const (ConsultaCreatedSuccess):
+              final newConsulta = state as ConsultaCreatedSuccess;
+              setState(() {
+                _consultaId = newConsulta.idConsulta;
+              });
+              CustomStateDialog.showAlertDialog(
+                context,
+                title: 'Consultas',
+                description: 'Consulta creada',
+              );
+              break;
+            case const (ConsultaEditedSuccess):
+              CustomStateDialog.showAlertDialog(
+                context,
+                title: 'Consultas',
+                description: 'Consulta editada',
+              );
               break;
             case const (DetalleconsultaServiceError):
               final stateError = state as DetalleconsultaServiceError;
@@ -80,51 +108,84 @@ class _DetalleConsultaBodyState extends State<DetalleConsultaBody> {
               formContent: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CustomInputSelect(
-                        title: 'Cita',
-                        hint: 'Selecciona una cita',
-                        valueItems: _citasList
-                            .map<String>((cita) => cita.idcita.toString())
-                            .toList(),
-                        displayItems: _citasList
-                            .map<String>((cita) => cita.motivo)
-                            .toList(),
-                        onSelected: (String? citaId) {
-                          setState(() {
-                            _selectedCitaId = citaId!;
-                          });
-                        },
-                        controller: _citaController,
-                      ),
-                      const SizedBox(
-                        width: 12.0,
-                      ),
-                      CustomInputSelect(
-                        title: 'Empleado',
-                        hint: 'Selecciona un empleado',
-                        valueItems: _empleadosList
-                            .map<String>(
-                                (empleado) => empleado.idpuesto.toString())
-                            .toList(),
-                        displayItems: _empleadosList
-                            .map<String>(
-                              (empleado) =>
-                                  '${empleado.nombreEmpleado} ${empleado.apellidoEmpleado}',
+                  widget.arguments == null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CustomInputSelect(
+                              title: 'Cita',
+                              hint: 'Selecciona una cita',
+                              valueItems: _citasList
+                                  .map<String>((cita) => cita.idcita.toString())
+                                  .toList(),
+                              displayItems: _citasList
+                                  .map<String>((cita) => cita.motivo)
+                                  .toList(),
+                              onSelected: (String? citaId) {
+                                setState(() {
+                                  _selectedCitaId = _citasList
+                                      .firstWhere(
+                                          (val) => val.motivo == citaId!)
+                                      .idcita
+                                      .toString();
+                                });
+                              },
+                              controller: _citaController,
+                            ),
+                            const SizedBox(
+                              width: 12.0,
+                            ),
+                            CustomInputSelect(
+                              title: 'Empleado',
+                              hint: 'Selecciona un empleado',
+                              valueItems: _empleadosList
+                                  .map<String>((empleado) =>
+                                      empleado.idpuesto.toString())
+                                  .toList(),
+                              displayItems: _empleadosList
+                                  .map<String>(
+                                    (empleado) =>
+                                        '${empleado.nombreEmpleado} ${empleado.apellidoEmpleado}',
+                                  )
+                                  .toList(),
+                              onSelected: (String? empleadoId) {
+                                setState(() {
+                                  _selectedEmpleadoId = _empleadosList
+                                      .firstWhere(
+                                        (val) =>
+                                            '${val.nombreEmpleado} ${val.apellidoEmpleado}' ==
+                                            empleadoId!,
+                                      )
+                                      .idempleado
+                                      .toString();
+                                });
+                              },
+                              controller: _empleadoController,
+                            ),
+                          ],
+                        )
+                      : Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Doctor:'),
+                                Text(widget.arguments!.nombreEmpleado),
+                              ],
+                            ),
+                            const SizedBox(
+                              width: 80.0,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Cita:'),
+                                Text(widget.arguments!.motivo),
+                              ],
                             )
-                            .toList(),
-                        onSelected: (String? empleadoId) {
-                          setState(() {
-                            _selectedEmpleadoId = empleadoId!;
-                          });
-                        },
-                        controller: _empleadoController,
-                      ),
-                    ],
-                  ),
+                          ],
+                        ),
                   const SizedBox(
                     height: 20.0,
                   ),
@@ -136,32 +197,36 @@ class _DetalleConsultaBodyState extends State<DetalleConsultaBody> {
                   const SizedBox(
                     height: 20.0,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CustomButton(
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const ConsultaLaboratorioPage(),
-                          ),
+                  _consultaId != null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CustomButton(
+                              onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ConsultaLaboratorioPage(),
+                                ),
+                              ),
+                              text: 'Laboratorio',
+                            ),
+                            const SizedBox(
+                              width: 12.0,
+                            ),
+                            CustomButton(
+                              onPressed: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const CrearRecetaPage(),
+                                ),
+                              ),
+                              text: 'Receta',
+                            ),
+                          ],
+                        )
+                      : const SizedBox(
+                          height: 41.0,
                         ),
-                        text: 'Laboratorio',
-                      ),
-                      const SizedBox(
-                        width: 12.0,
-                      ),
-                      CustomButton(
-                        onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const CrearRecetaPage(),
-                          ),
-                        ),
-                        text: 'Receta',
-                      ),
-                    ],
-                  ),
                   CustomTextArea(
                     labelText: 'Diagnostico',
                     controller: _diagnosticoController,
@@ -172,7 +237,13 @@ class _DetalleConsultaBodyState extends State<DetalleConsultaBody> {
                   ),
                   Center(
                     child: CustomButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if (widget.arguments == null) {
+                          _saveNewConsulta();
+                        } else {
+                          _editConsulta();
+                        }
+                      },
                       text: 'Guardar',
                     ),
                   )
@@ -192,7 +263,18 @@ class _DetalleConsultaBodyState extends State<DetalleConsultaBody> {
     );
   }
 
-  void _getInitConfigs() {
+  void _setInitalValues() {
+    final initValues = widget.arguments!;
+    setState(() {
+      _consultaId = initValues.idconsulta;
+      _selectedCitaId = initValues.idcita.toString();
+      _selectedEmpleadoId = initValues.idempleado.toString();
+      _sintomaController.text = initValues.sintomas;
+      _diagnosticoController.text = initValues.diagnostico;
+    });
+  }
+
+  void _getInitialList() {
     context.read<DetalleconsultaBloc>()
       ..add(
         CitasListShown(),
@@ -200,5 +282,28 @@ class _DetalleConsultaBodyState extends State<DetalleConsultaBody> {
       ..add(
         EmpleadosListShown(),
       );
+  }
+
+  void _saveNewConsulta() {
+    context.read<DetalleconsultaBloc>().add(
+          ConsultaSaved(
+            idcita: int.parse(_selectedCitaId),
+            idempleado: int.parse(_selectedEmpleadoId),
+            sintomas: _sintomaController.text,
+            diagnostico: _diagnosticoController.text,
+          ),
+        );
+  }
+
+  void _editConsulta() {
+    context.read<DetalleconsultaBloc>().add(
+          ConsultaEdited(
+            idconsulta: _consultaId!,
+            idcita: int.parse(_selectedCitaId),
+            idempleado: int.parse(_selectedEmpleadoId),
+            sintomas: _sintomaController.text,
+            diagnostico: _diagnosticoController.text,
+          ),
+        );
   }
 }

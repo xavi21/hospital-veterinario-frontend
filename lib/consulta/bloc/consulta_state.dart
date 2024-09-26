@@ -14,10 +14,6 @@ final class ConsultaSuccess extends ConsultaState {
   });
 }
 
-final class ConsultaCreatedSuccess extends ConsultaState {}
-
-final class ConsultaEditedSuccess extends ConsultaState {}
-
 final class ConsultaDeletedSuccess extends ConsultaState {}
 
 final class ConsultaError extends ConsultaState {

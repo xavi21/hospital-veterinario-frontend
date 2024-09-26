@@ -14,8 +14,6 @@ part 'consulta_state.dart';
 class ConsultaBloc extends Bloc<ConsultaEvent, ConsultaState> {
   ConsultaBloc() : super(ConsultaInitial()) {
     on<ConsultaShown>(getConsultas);
-    on<ConsultaSaved>(createConsulta);
-    on<ConsultaEdited>(updateConsulta);
     on<ConsultaDeleted>(deleteConsulta);
   }
 
@@ -32,75 +30,6 @@ class ConsultaBloc extends Bloc<ConsultaEvent, ConsultaState> {
       final List<ConsultaListModel> resp = await service.getConsultas();
       emit(
         ConsultaSuccess(consultas: resp),
-      );
-    } on DioException catch (error) {
-      if (error.response?.statusCode == null ||
-          error.response!.statusCode! >= 500 ||
-          error.response!.data[responseCode] == null) {
-        emit(
-          ServerClientError(),
-        );
-      } else {
-        emit(
-          ConsultaError(
-            message: error.response!.data[responseMessage],
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> createConsulta(
-    ConsultaSaved event,
-    Emitter<BaseState> emit,
-  ) async {
-    emit(
-      ConsultaInProgress(),
-    );
-    try {
-      await service.createConsulta(
-        idcita: event.idcita,
-        idempleado: event.idempleado,
-        sintomas: event.sintomas,
-        diagnostico: event.diagnostico,
-      );
-      emit(
-        ConsultaCreatedSuccess(),
-      );
-    } on DioException catch (error) {
-      if (error.response?.statusCode == null ||
-          error.response!.statusCode! >= 500 ||
-          error.response!.data[responseCode] == null) {
-        emit(
-          ServerClientError(),
-        );
-      } else {
-        emit(
-          ConsultaError(
-            message: error.response!.data[responseMessage],
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> updateConsulta(
-    ConsultaEdited event,
-    Emitter<BaseState> emit,
-  ) async {
-    emit(
-      ConsultaInProgress(),
-    );
-    try {
-      await service.updateConsulta(
-        idConsulta: event.idconsulta,
-        idcita: event.idcita,
-        idempleado: event.idempleado,
-        sintomas: event.sintomas,
-        diagnostico: event.diagnostico,
-      );
-      emit(
-        ConsultaEditedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||

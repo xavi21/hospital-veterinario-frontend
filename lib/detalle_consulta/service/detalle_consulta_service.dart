@@ -13,25 +13,61 @@ class DetalleConsultaService {
     this.client,
   );
 
-  Future<List<CitaListModel>> getCitas() async {
+  Future<List<CitaModel>> getCitas() async {
     final response = await client.get(
       getCitasPath,
     );
-    return List<CitaListModel>.from(
+    return List<CitaModel>.from(
       response.data['data'].map(
-        (cita) => CitaListModel.fromJson(cita),
+        (cita) => CitaModel.fromJson(cita),
       ),
     );
   }
 
-  Future<List<EmpeladoListModel>> getEmpleados() async {
+  Future<List<EmpleadoModel>> getEmpleados() async {
     final response = await client.get(
       getEmpleadosPath,
     );
-    return List<EmpeladoListModel>.from(
+    return List<EmpleadoModel>.from(
       response.data['data'].map(
-        (empleado) => EmpeladoListModel.fromJson(empleado),
+        (empleado) => EmpleadoModel.fromJson(empleado),
       ),
+    );
+  }
+
+  Future<Response<dynamic>> createConsulta({
+    required int idcita,
+    required int idempleado,
+    required String sintomas,
+    required String diagnostico,
+  }) async {
+    return await client.post(
+      createConsultaPath,
+      data: {
+        'idcita': idcita,
+        'idempleado': idempleado,
+        'sintomas': sintomas,
+        'diagnostico': diagnostico,
+      },
+    );
+  }
+
+  Future<Response<dynamic>> updateConsulta({
+    required int idConsulta,
+    required int idcita,
+    required int idempleado,
+    required String sintomas,
+    required String diagnostico,
+  }) async {
+    return await client.put(
+      updateConsultaPath,
+      data: {
+        'idconsulta': idConsulta,
+        'idcita': idcita,
+        'idempleado': idempleado,
+        'sintomas': sintomas,
+        'diagnostico': diagnostico,
+      },
     );
   }
 }

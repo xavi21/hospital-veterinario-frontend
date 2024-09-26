@@ -5,10 +5,14 @@ import 'package:paraiso_canino/common/button/custom_button.dart';
 import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
 import 'package:paraiso_canino/common/enum/action_emum.dart';
 import 'package:paraiso_canino/common/input/custom_input.dart';
+import 'package:paraiso_canino/common/input/custom_input_select.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
 import 'package:paraiso_canino/opcion_usuario/bloc/opcion_usuario_bloc.dart';
+import 'package:paraiso_canino/opcion_usuario/model/menu_model.dart';
 import 'package:paraiso_canino/opcion_usuario/model/opcion_usuario_model.dart';
+import 'package:paraiso_canino/opcion_usuario/model/opciones_list_model.dart';
+import 'package:paraiso_canino/repository/user_repository.dart';
 import 'package:paraiso_canino/resources/colors.dart';
 
 class OpcionUsuarioBody extends StatefulWidget {
@@ -21,23 +25,31 @@ class OpcionUsuarioBody extends StatefulWidget {
 class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
-  final TextEditingController _idUsuario = TextEditingController();
-  final TextEditingController _idMenu = TextEditingController();
-  final TextEditingController _idOpcion = TextEditingController();
+  final TextEditingController _idMenuController = TextEditingController();
+  final TextEditingController _idOpcionController = TextEditingController();
   final TextEditingController _alta = TextEditingController();
   final TextEditingController _baja = TextEditingController();
   final TextEditingController _cambio = TextEditingController();
   final TextEditingController _searchUserOption = TextEditingController();
 
+  List<OpcionesListModel> _optionsList = [];
+  List<MenuModel> _menuList = [];
+
   late List<OpcionUsuarioModel> opcionUsuarioList;
 
   late bool _isEdit;
+
+  late String _idUsuario;
+  late String _idOpcion;
+  late String _idMenu;
 
   @override
   void initState() {
     _isEdit = false;
     opcionUsuarioList = [];
     _getOptionList();
+    _getInitialLists();
+    _getCurrentUser();
     super.initState();
   }
 
@@ -52,6 +64,16 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
           if (state is OpcionUsuarioListSuccess) {
             setState(() {
               opcionUsuarioList = state.opcionesList;
+            });
+          }
+          if (state is OptionsListSuccess) {
+            setState(() {
+              _optionsList = state.optionList;
+            });
+          }
+          if (state is MenuListSuccess) {
+            setState(() {
+              _menuList = state.menuList;
             });
           }
           if (state is OpcionUsuarioCreatedSuccess) {
@@ -106,9 +128,8 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
               onTapAddButton: () {
                 setState(() {
                   _isEdit = false;
-                  _idUsuario.clear();
-                  _idMenu.clear();
-                  _idOpcion.clear();
+                  _idMenuController.clear();
+                  _idOpcionController.clear();
                   _alta.clear();
                   _baja.clear();
                   _cambio.clear();
@@ -194,9 +215,10 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
                             if (value == TableRowActions.edit) {
                               setState(() {
                                 _isEdit = true;
-                                _idUsuario.text = option.idusuario;
-                                _idMenu.text = option.idmenu.toString();
-                                _idOpcion.text = option.idopcion.toString();
+                                _idMenu = option.idmenu.toString();
+                                _idOpcion = option.idopcion.toString();
+                                _idMenuController.text = option.menuNombre;
+                                _idOpcionController.text = option.opcionNombre;
                                 _alta.text = option.alta.toString();
                                 _baja.text = option.baja.toString();
                                 _cambio.text = option.cambio.toString();
@@ -249,28 +271,45 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                _isEdit ? 'Editar Opcion' : 'Nueva Opcioon',
+                _isEdit ? 'Editar Opcion' : 'Nueva Opcion',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 20.0),
-              CustomInput(
-                labelText: 'Id usuario',
-                controller: _idUsuario,
-                isRequired: true,
+              CustomInputSelect(
+                title: 'Menu',
+                hint: 'Selecciona un menu',
+                valueItems: _menuList
+                    .map<String>((menu) => menu.idmenu.toString())
+                    .toList(),
+                displayItems: _menuList.map((menu) => menu.name).toList(),
+                onSelected: (String? menu) {
+                  setState(() {
+                    _idMenu = _menuList
+                        .firstWhere((val) => val.name == menu!)
+                        .idmenu
+                        .toString();
+                  });
+                },
+                controller: _idMenuController,
               ),
               const SizedBox(height: 12.0),
-              CustomInput(
-                labelText: 'Id Menu',
-                controller: _idMenu,
-                textInputType: TextInputType.number,
-                isRequired: true,
-              ),
-              const SizedBox(height: 12.0),
-              CustomInput(
-                labelText: 'Id Opción',
-                controller: _idOpcion,
-                textInputType: TextInputType.number,
-                isRequired: true,
+              CustomInputSelect(
+                title: 'Opcion',
+                hint: 'Selecciona una opcion',
+                valueItems: _optionsList
+                    .map<String>((option) => option.idopcion.toString())
+                    .toList(),
+                displayItems:
+                    _optionsList.map((option) => option.name).toList(),
+                onSelected: (String? option) {
+                  setState(() {
+                    _idOpcion = _optionsList
+                        .firstWhere((val) => val.name == option!)
+                        .idopcion
+                        .toString();
+                  });
+                },
+                controller: _idOpcionController,
               ),
               const SizedBox(height: 12.0),
               CustomInput(
@@ -326,6 +365,23 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
     });
   }
 
+  void _getCurrentUser() async {
+    final String currentUser = await UserRepository().getReminderEmail();
+    setState(() {
+      _idUsuario = currentUser;
+    });
+  }
+
+  void _getInitialLists() {
+    context.read<OpcionUsuarioBloc>()
+      ..add(
+        OptionsListShown(),
+      )
+      ..add(
+        MenuListShown(),
+      );
+  }
+
   void _getOptionList() {
     context.read<OpcionUsuarioBloc>().add(
           UserOptionsShown(),
@@ -335,9 +391,9 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
   void _saveNewUserOption() {
     context.read<OpcionUsuarioBloc>().add(
           UserOptionSaved(
-            idUsuario: _idUsuario.text,
-            idMenu: int.parse(_idMenu.text),
-            idOpcion: int.parse(_idOpcion.text),
+            idUsuario: _idUsuario,
+            idMenu: int.parse(_idMenu),
+            idOpcion: int.parse(_idOpcion),
             alta: int.parse(_alta.text),
             baja: int.parse(_baja.text),
             cambio: int.parse(_cambio.text),
@@ -362,9 +418,9 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
   void _editUserOption() {
     context.read<OpcionUsuarioBloc>().add(
           UserOptionEdited(
-            idUsuario: _idUsuario.text,
-            idMenu: int.parse(_idMenu.text),
-            idOpcion: int.parse(_idOpcion.text),
+            idUsuario: _idUsuario,
+            idMenu: int.parse(_idMenu),
+            idOpcion: int.parse(_idOpcion),
             alta: int.parse(_alta.text),
             baja: int.parse(_baja.text),
             cambio: int.parse(_cambio.text),

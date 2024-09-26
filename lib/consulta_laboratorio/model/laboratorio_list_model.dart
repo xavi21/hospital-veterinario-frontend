@@ -1,3 +1,5 @@
+import 'package:paraiso_canino/resources/constants.dart';
+
 class LaboratorioListModel {
   final String fechaSolicitud;
   final String fechaResultado;
@@ -17,10 +19,10 @@ class LaboratorioListModel {
 
   factory LaboratorioListModel.fromJson(Map<String, dynamic> json) =>
       LaboratorioListModel(
-        fechaSolicitud: json["fechaSolicitud"],
-        fechaResultado: json["fechaResultado"],
+        fechaSolicitud: json["fechaSolicitud"] ?? emptyString,
+        fechaResultado: json["fechaResultado"] ?? emptyString,
         idLaboratorio: json["idLaboratorio"],
-        nombre: json["nombre"],
-        descripcion: json["descripcion"],
+        nombre: json["nombre"] ?? emptyString,
+        descripcion: json["descripcion"] ?? emptyString,
       );
 }

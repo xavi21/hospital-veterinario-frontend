@@ -1,4 +1,4 @@
-class EmpeladoListModel {
+class EmpleadoModel {
   final String usuariomodificacion;
   final String fechamodificacion;
   final String usuariocreacion;
@@ -19,7 +19,7 @@ class EmpeladoListModel {
   final int idsucursal;
   final String nombreSucursal;
 
-  EmpeladoListModel({
+  EmpleadoModel({
     required this.usuariomodificacion,
     required this.fechamodificacion,
     required this.usuariocreacion,
@@ -41,8 +41,7 @@ class EmpeladoListModel {
     required this.nombreSucursal,
   });
 
-  factory EmpeladoListModel.fromJson(Map<String, dynamic> json) =>
-      EmpeladoListModel(
+  factory EmpleadoModel.fromJson(Map<String, dynamic> json) => EmpleadoModel(
         usuariomodificacion: json["usuariomodificacion"],
         fechamodificacion: json["fechamodificacion"],
         usuariocreacion: json["usuariocreacion"],

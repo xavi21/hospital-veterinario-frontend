@@ -245,9 +245,8 @@ class _OpcionesBodyState extends State<OpcionesBody> {
               ),
               const SizedBox(height: 12.0),
               CustomInput(
-                labelText: 'Página',
+                labelText: 'Página (Opcional)',
                 controller: _pagina,
-                isRequired: true,
               ),
               const SizedBox(height: 12.0),
               CustomButton(

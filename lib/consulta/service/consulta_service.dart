@@ -23,42 +23,6 @@ class ConsultaService {
     );
   }
 
-  Future<Response<dynamic>> createConsulta({
-    required int idcita,
-    required int idempleado,
-    required String sintomas,
-    required String diagnostico,
-  }) async {
-    return await client.post(
-      createConsultaPath,
-      data: {
-        'idcita': idcita,
-        'idempleado': idempleado,
-        'sintomas': sintomas,
-        'diagnostico': diagnostico,
-      },
-    );
-  }
-
-  Future<Response<dynamic>> updateConsulta({
-    required int idConsulta,
-    required int idcita,
-    required int idempleado,
-    required String sintomas,
-    required String diagnostico,
-  }) async {
-    return await client.put(
-      updateConsultaPath,
-      data: {
-        'idconsulta': idConsulta,
-        'idcita': idcita,
-        'idempleado': idempleado,
-        'sintomas': sintomas,
-        'diagnostico': diagnostico,
-      },
-    );
-  }
-
   Future<Response<dynamic>> deleteConsulta({
     required int id,
   }) async {

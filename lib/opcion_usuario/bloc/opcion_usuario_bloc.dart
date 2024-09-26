@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
+import 'package:paraiso_canino/opcion_usuario/model/menu_model.dart';
 import 'package:paraiso_canino/opcion_usuario/model/opcion_usuario_model.dart';
+import 'package:paraiso_canino/opcion_usuario/model/opciones_list_model.dart';
 import 'package:paraiso_canino/opcion_usuario/service/opcion_usuario_service.dart';
 import 'package:paraiso_canino/resources/constants.dart';
 
@@ -15,9 +17,73 @@ class OpcionUsuarioBloc extends Bloc<OpcionUsuarioEvent, OpcionUsuarioState> {
     on<UserOptionSaved>(createUserOption);
     on<UserOptionEdited>(updateUserOption);
     on<UserOptionDeleted>(deleteUserOption);
+    on<OptionsListShown>(getOptionSelectList);
+    on<MenuListShown>(getMenuSelectList);
   }
 
   OpcioneUsuarioService service = OpcioneUsuarioService();
+
+  Future<void> getOptionSelectList(
+    OptionsListShown event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      OpcionUsuarioInProgress(),
+    );
+    try {
+      final List<OpcionesListModel> response = await service.getOptionsList();
+      emit(
+        OptionsListSuccess(
+          optionList: response,
+        ),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          OpcionUsuarioServiceError(
+            message: error.response!.data![responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> getMenuSelectList(
+    MenuListShown event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      OpcionUsuarioInProgress(),
+    );
+    try {
+      final List<MenuModel> resp = await service.getMenuList();
+      emit(
+        MenuListSuccess(
+          menuList: resp,
+        ),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          OpcionUsuarioServiceError(
+            message: error.response!.data[responseMessage],
+          ),
+        );
+      }
+    }
+  }
 
   Future<void> getOptionList(
     UserOptionsShown event,

@@ -15,6 +15,8 @@ class DetalleconsultaBloc
   DetalleconsultaBloc() : super(DetalleconsultaInitial()) {
     on<CitasListShown>(getCitas);
     on<EmpleadosListShown>(getEmpleados);
+    on<ConsultaSaved>(createConsulta);
+    on<ConsultaEdited>(updateConsulta);
   }
 
   final DetalleConsultaService service = DetalleConsultaService();
@@ -27,7 +29,7 @@ class DetalleconsultaBloc
       DetalleconsultaInProgress(),
     );
     try {
-      final List<CitaListModel> resp = await service.getCitas();
+      final List<CitaModel> resp = await service.getCitas();
       emit(
         DetalleconsultaCitaListSuccess(citas: resp),
       );
@@ -56,9 +58,80 @@ class DetalleconsultaBloc
       DetalleconsultaInProgress(),
     );
     try {
-      final List<EmpeladoListModel> resp = await service.getEmpleados();
+      final List<EmpleadoModel> resp = await service.getEmpleados();
       emit(
         DetalleconsultaEmpleadoListSuccess(empleados: resp),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          DetalleconsultaServiceError(
+            message: error.response!.data[responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> createConsulta(
+    ConsultaSaved event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      DetalleconsultaInProgress(),
+    );
+    try {
+      final resp = await service.createConsulta(
+        idcita: event.idcita,
+        idempleado: event.idempleado,
+        sintomas: event.sintomas,
+        diagnostico: event.diagnostico,
+      );
+      emit(
+        ConsultaCreatedSuccess(
+          idConsulta: resp.data['data']['idconsulta'],
+        ),
+      );
+    } on DioException catch (error) {
+      if (error.response?.statusCode == null ||
+          error.response!.statusCode! >= 500 ||
+          error.response!.data[responseCode] == null) {
+        emit(
+          ServerClientError(),
+        );
+      } else {
+        emit(
+          DetalleconsultaServiceError(
+            message: error.response!.data[responseMessage],
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> updateConsulta(
+    ConsultaEdited event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(
+      DetalleconsultaInProgress(),
+    );
+    try {
+      await service.updateConsulta(
+        idConsulta: event.idconsulta,
+        idcita: event.idcita,
+        idempleado: event.idempleado,
+        sintomas: event.sintomas,
+        diagnostico: event.diagnostico,
+      );
+      emit(
+        ConsultaEditedSuccess(),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||

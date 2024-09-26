@@ -14,6 +14,22 @@ final class OpcionUsuarioListSuccess extends OpcionUsuarioState {
   });
 }
 
+final class OptionsListSuccess extends OpcionUsuarioState {
+  final List<OpcionesListModel> optionList;
+
+  OptionsListSuccess({
+    required this.optionList,
+  });
+}
+
+final class MenuListSuccess extends OpcionUsuarioState {
+  final List<MenuModel> menuList;
+
+  MenuListSuccess({
+    required this.menuList,
+  });
+}
+
 final class OpcionUsuarioCreatedSuccess extends OpcionUsuarioState {}
 
 final class OpcionUsuarioEditedSuccess extends OpcionUsuarioState {}

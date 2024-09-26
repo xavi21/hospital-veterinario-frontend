@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
-import 'package:paraiso_canino/common/button/custom_button.dart';
 import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
 import 'package:paraiso_canino/common/enum/action_emum.dart';
-import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
 import 'package:paraiso_canino/consulta/bloc/consulta_bloc.dart';
@@ -21,21 +19,12 @@ class ConsultaBody extends StatefulWidget {
 
 class _ConsultaBodyState extends State<ConsultaBody> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> _form = GlobalKey<FormState>();
-  final TextEditingController _idCita = TextEditingController();
-  final TextEditingController _idEmpleado = TextEditingController();
-  final TextEditingController _sintomas = TextEditingController();
-  final TextEditingController _diagnostico = TextEditingController();
   final TextEditingController _searchConsulta = TextEditingController();
 
   late List<ConsultaListModel> consultas;
 
-  late bool _isEdit;
-  late int _consultaId;
-
   @override
   void initState() {
-    _isEdit = false;
     consultas = [];
     super.initState();
     _getConsultaList();
@@ -45,7 +34,6 @@ class _ConsultaBodyState extends State<ConsultaBody> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      endDrawer: _consultaForm(),
       backgroundColor: fillInputSelect,
       body: BlocListener<ConsultaBloc, BaseState>(
         listener: (context, state) {
@@ -53,22 +41,6 @@ class _ConsultaBodyState extends State<ConsultaBody> {
             case const (ConsultaSuccess):
               final loadedState = state as ConsultaSuccess;
               setState(() => consultas = loadedState.consultas);
-              break;
-            case const (ConsultaCreatedSuccess):
-              _getConsultaList();
-              CustomStateDialog.showAlertDialog(
-                context,
-                title: 'Consultas',
-                description: 'Consulta creada',
-              );
-              break;
-            case const (ConsultaEditedSuccess):
-              _getConsultaList();
-              CustomStateDialog.showAlertDialog(
-                context,
-                title: 'Consultas',
-                description: 'Consulta editada',
-              );
               break;
             case const (ConsultaDeletedSuccess):
               _getConsultaList();
@@ -105,19 +77,11 @@ class _ConsultaBodyState extends State<ConsultaBody> {
               onChangeSearchButton: () => _getConsultaList(),
               onTapSearchButton: () => _filterTable(),
               onTapAddButton: () {
-                setState(() {
-                  _isEdit = false;
-                  _idCita.clear();
-                  _idEmpleado.clear();
-                  _sintomas.clear();
-                  _diagnostico.clear();
-                });
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const DetalleConsultaPage(),
                   ),
                 );
-                // _scaffoldKey.currentState!.openEndDrawer();
               },
               headers: const [
                 'ID Cita',
@@ -183,15 +147,13 @@ class _ConsultaBodyState extends State<ConsultaBody> {
                           color: white,
                           onSelected: (value) {
                             if (value == TableRowActions.edit) {
-                              setState(() {
-                                _isEdit = true;
-                                _idCita.text = 'consulta';
-                                _idEmpleado.text = 'consulta';
-                                _sintomas.text = 'consulta';
-                                _diagnostico.text = 'consulta';
-                                // _consultaId = consulta.idConsulta;
-                              });
-                              _scaffoldKey.currentState!.openEndDrawer();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => DetalleConsultaPage(
+                                    arguments: consulta,
+                                  ),
+                                ),
+                              );
                             }
                           },
                           itemBuilder: (context) {
@@ -223,69 +185,6 @@ class _ConsultaBodyState extends State<ConsultaBody> {
     );
   }
 
-  Widget _consultaForm() {
-    return Drawer(
-      backgroundColor: fillInputSelect,
-      child: Form(
-        key: _form,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                _isEdit ? 'Editar Consulta' : 'Nueva Consulta',
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-              const SizedBox(height: 20.0),
-              CustomInput(
-                labelText: 'Id Cita',
-                controller: _idCita,
-                isRequired: true,
-              ),
-              const SizedBox(height: 12.0),
-              CustomInput(
-                labelText: 'Id Empleado',
-                controller: _idEmpleado,
-                textInputType: TextInputType.number,
-                isRequired: true,
-              ),
-              const SizedBox(height: 12.0),
-              CustomInput(
-                labelText: 'Sintomas',
-                controller: _sintomas,
-                textInputType: TextInputType.number,
-                isRequired: true,
-              ),
-              const SizedBox(height: 12.0),
-              CustomInput(
-                labelText: 'Diagnostico',
-                controller: _diagnostico,
-                textInputType: TextInputType.number,
-                isRequired: true,
-              ),
-              const SizedBox(height: 12.0),
-              CustomButton(
-                onPressed: () {
-                  if (_form.currentState!.validate()) {
-                    Navigator.pop(context);
-                    if (_isEdit) {
-                      _editConsulta(id: _consultaId);
-                    } else {
-                      _saveNewConsulta();
-                    }
-                  }
-                },
-                text: _isEdit ? 'Editar' : 'Guardar',
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   void _filterTable() {
     setState(() {
       consultas = consultas
@@ -301,29 +200,6 @@ class _ConsultaBodyState extends State<ConsultaBody> {
   void _getConsultaList() {
     context.read<ConsultaBloc>().add(
           ConsultaShown(),
-        );
-  }
-
-  void _saveNewConsulta() {
-    context.read<ConsultaBloc>().add(
-          ConsultaSaved(
-            idcita: int.parse(_idCita.text),
-            idempleado: int.parse(_idEmpleado.text),
-            sintomas: _sintomas.text,
-            diagnostico: _diagnostico.text,
-          ),
-        );
-  }
-
-  void _editConsulta({required int id}) {
-    context.read<ConsultaBloc>().add(
-          ConsultaEdited(
-            idconsulta: _consultaId,
-            idcita: int.parse(_idCita.text),
-            idempleado: int.parse(_idEmpleado.text),
-            sintomas: _sintomas.text,
-            diagnostico: _diagnostico.text,
-          ),
         );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paraiso_canino/consulta_laboratorio/bloc/consultalaboratorio_bloc.dart';
 import 'package:paraiso_canino/consulta_laboratorio/widget/consulta_laboratorio_body.dart';
 
 class ConsultaLaboratorioPage extends StatelessWidget {
@@ -6,6 +8,9 @@ class ConsultaLaboratorioPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ConsultaLaboratorioBody();
+    return BlocProvider<ConsultalaboratorioBloc>(
+      create: (context) => ConsultalaboratorioBloc(),
+      child: const ConsultaLaboratorioBody(),
+    );
   }
 }

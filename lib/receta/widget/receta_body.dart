@@ -24,6 +24,7 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
   final TextEditingController _indicacionesController = TextEditingController();
 
   List<RecetaListModel> _recetasList = [];
+
   final List<String> _medicamentosList = [
     'Carprofeno',
     'Amoxicilina',

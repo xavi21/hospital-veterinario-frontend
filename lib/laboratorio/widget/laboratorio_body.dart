@@ -222,7 +222,7 @@ class _LaboratorioBodyState extends State<LaboratorioBody> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                _isEdit ? 'Editar Laboratorio' : 'Nueva Laboratorio',
+                _isEdit ? 'Editar Laboratorio' : 'Nuevo Laboratorio',
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 20.0),

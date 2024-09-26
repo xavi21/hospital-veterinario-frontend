@@ -9,6 +9,10 @@ abstract class OpcionUsuarioEvent extends Equatable {
 
 final class UserOptionsShown extends OpcionUsuarioEvent {}
 
+final class OptionsListShown extends OpcionUsuarioEvent {}
+
+final class MenuListShown extends OpcionUsuarioEvent {}
+
 final class UserOptionSaved extends OpcionUsuarioEvent {
   final String idUsuario;
   final int idMenu;

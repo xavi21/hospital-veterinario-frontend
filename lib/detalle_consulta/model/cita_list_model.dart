@@ -1,4 +1,4 @@
-class CitaListModel {
+class CitaModel {
   final int idcita;
   final String nombreStatusCita;
   final String usuariomodificacion;
@@ -12,7 +12,7 @@ class CitaListModel {
   final String fechacreacion;
   bool isHover;
 
-  CitaListModel({
+  CitaModel({
     required this.idcita,
     required this.nombreStatusCita,
     required this.usuariomodificacion,
@@ -27,7 +27,7 @@ class CitaListModel {
     this.isHover = false,
   });
 
-  factory CitaListModel.fromJson(Map<String, dynamic> json) => CitaListModel(
+  factory CitaModel.fromJson(Map<String, dynamic> json) => CitaModel(
         idcita: json["idcita"],
         nombreStatusCita: json["nombre_status_cita"],
         usuariomodificacion: json["usuariomodificacion"],
