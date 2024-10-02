@@ -4,13 +4,19 @@ import 'package:paraiso_canino/consulta_laboratorio/bloc/consultalaboratorio_blo
 import 'package:paraiso_canino/consulta_laboratorio/widget/consulta_laboratorio_body.dart';
 
 class ConsultaLaboratorioPage extends StatelessWidget {
-  const ConsultaLaboratorioPage({super.key});
+  final int idConsulta;
+  const ConsultaLaboratorioPage({
+    super.key,
+    required this.idConsulta,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ConsultalaboratorioBloc>(
       create: (context) => ConsultalaboratorioBloc(),
-      child: const ConsultaLaboratorioBody(),
+      child: ConsultaLaboratorioBody(
+        idConsulta: idConsulta,
+      ),
     );
   }
 }

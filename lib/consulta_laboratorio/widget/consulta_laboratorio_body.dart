@@ -15,7 +15,11 @@ import 'package:paraiso_canino/resources/colors.dart';
 import 'package:intl/intl.dart';
 
 class ConsultaLaboratorioBody extends StatefulWidget {
-  const ConsultaLaboratorioBody({super.key});
+  final int idConsulta;
+  const ConsultaLaboratorioBody({
+    super.key,
+    required this.idConsulta,
+  });
 
   @override
   State<ConsultaLaboratorioBody> createState() =>
@@ -85,19 +89,13 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
                   Row(
                     children: [
                       Expanded(
+                        child: Container(),
+                      ),
+                      Expanded(
                         child: CustomInput(
                           controller: _requestDate,
                           labelText: 'Fecha solicitud',
                           isEnabled: false,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 50.0,
-                      ),
-                      Expanded(
-                        child: CustomInput(
-                          controller: _resultDate,
-                          labelText: 'Fecha resultado',
                         ),
                       ),
                       const SizedBox(
@@ -235,6 +233,12 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 20.0),
+              CustomInput(
+                isRequired: true,
+                controller: _resultDate,
+                labelText: 'Fecha resultado',
+              ),
+              const SizedBox(height: 12.0),
               CustomInputSelect(
                 title: 'Laboratorio',
                 valueItems: _laboratoriosSelectList
@@ -248,6 +252,7 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
               ),
               const SizedBox(height: 12.0),
               CustomTextArea(
+                isRequired: true,
                 controller: _description,
                 labelText: 'Descripcion',
               ),

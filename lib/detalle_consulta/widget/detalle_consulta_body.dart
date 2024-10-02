@@ -205,8 +205,9 @@ class _DetalleConsultaBodyState extends State<DetalleConsultaBody> {
                             CustomButton(
                               onPressed: () => Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ConsultaLaboratorioPage(),
+                                  builder: (context) => ConsultaLaboratorioPage(
+                                    idConsulta: _consultaId!,
+                                  ),
                                 ),
                               ),
                               text: 'Laboratorio',
@@ -217,7 +218,9 @@ class _DetalleConsultaBodyState extends State<DetalleConsultaBody> {
                             CustomButton(
                               onPressed: () => Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => const CrearRecetaPage(),
+                                  builder: (context) => CrearRecetaPage(
+                                    idConsulta: _consultaId!,
+                                  ),
                                 ),
                               ),
                               text: 'Receta',
