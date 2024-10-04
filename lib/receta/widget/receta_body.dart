@@ -16,6 +16,7 @@ import 'package:paraiso_canino/receta/bloc/receta_bloc.dart';
 import 'package:paraiso_canino/receta/model/medicina_list_model.dart';
 import 'package:paraiso_canino/receta/model/receta_list_model.dart';
 import 'package:paraiso_canino/resources/colors.dart';
+import 'package:paraiso_canino/resources/constants.dart';
 
 import 'package:pdf/widgets.dart' as pw;
 
@@ -44,10 +45,17 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
   List<MedicinaListModel> _medicamentosList = [];
 
   late int? _idReceta;
+  late int? _idMedicamento;
+  late String _mascota;
+  late String _medico;
 
   @override
   void initState() {
     _idReceta = null;
+    _idMedicamento = null;
+    _mascota = emptyString;
+    _medico = emptyString;
+    _getReceta();
     _getMedicamentos();
     super.initState();
   }
@@ -60,15 +68,23 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
       backgroundColor: fillInputSelect,
       body: BlocListener<RecetaBloc, BaseState>(
         listener: (context, state) {
+          if (state is ConsultaSuccess) {
+            final data = state.consulta;
+            setState(() {
+              _idReceta = data.idreceta;
+              _mascota = data.nombreMascota;
+              _medico = '${data.nombreEmpleado} ${data.apellidoEmpleado}';
+              _observacionesController.text = data.observaciones;
+            });
+            _getDetalleReceta();
+          }
           if (state is RecetaMedicinasListSuccess) {
             setState(() {
               _medicamentosList = state.medicinas;
             });
           }
           if (state is RecetaCreatedSuccess) {
-            setState(() {
-              _idReceta = state.idReceta;
-            });
+            _getReceta();
             CustomStateDialog.showAlertDialog(
               context,
               title: 'Receta creada',
@@ -228,10 +244,6 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
                                         value: TableRowActions.edit,
                                         child: Text('Editar'),
                                       ),
-                                      PopupMenuItem(
-                                        value: TableRowActions.delete,
-                                        child: Text('Eliminar'),
-                                      ),
                                     ];
                                   },
                                 )
@@ -259,7 +271,14 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
     );
   }
 
-  Widget _recetaForm() {
+  Widget _recetaForm([RecetaListModel? model]) {
+    if (model != null) {
+      setState(() {
+        _medicamentoController.text = model.nombreMedicamento;
+        _cantidadController.text = model.cantidad.toString();
+        _indicacionesController.text = model.indicaciones;
+      });
+    }
     return Drawer(
       backgroundColor: fillInputSelect,
       child: Form(
@@ -283,7 +302,14 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
                 displayItems: _medicamentosList
                     .map((medicamento) => medicamento.nombre)
                     .toList(),
-                onSelected: (medicamento) {},
+                onSelected: (String? medicamento) {
+                  setState(() {
+                    _idMedicamento = _medicamentosList
+                        .firstWhere(
+                            (medicina) => medicina.nombre == medicamento)
+                        .idmedicamento;
+                  });
+                },
                 controller: _medicamentoController,
               ),
               const SizedBox(height: 12.0),
@@ -303,21 +329,25 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
                 onPressed: () {
                   if (_form.currentState!.validate() &&
                       _medicamentoController.text.isNotEmpty) {
-                    context.read<RecetaBloc>().add(
-                          DetalleRecetaSaved(
-                            cantidad: int.parse(_cantidadController.text),
-                            idReceta: _idReceta!,
-                            idMedicamento: 1,
-                            indicaciones: _indicacionesController.text,
-                          ),
-                        );
+                    if (model != null) {
+                      //TODO implementarendpoint de actualizar
+                    } else {
+                      context.read<RecetaBloc>().add(
+                            DetalleRecetaSaved(
+                              cantidad: int.parse(_cantidadController.text),
+                              idReceta: _idReceta!,
+                              idMedicamento: _idMedicamento!,
+                              indicaciones: _indicacionesController.text,
+                            ),
+                          );
+                    }
                     _medicamentoController.clear();
                     _indicacionesController.clear();
                     _cantidadController.clear();
                     Navigator.pop(context);
                   }
                 },
-                text: 'Guardar',
+                text: model != null ? 'Editar' : 'Guardar',
               )
             ],
           ),
@@ -354,14 +384,14 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
                 ),
                 pw.Divider(),
                 pw.Text(
-                  'Paciente: ',
+                  'Paciente: $_mascota',
                   style: const pw.TextStyle(
                     fontSize: 14,
                   ),
                 ),
                 pw.SizedBox(height: 16),
                 pw.Text(
-                  'Doctor: ',
+                  'Doctor: $_medico',
                   style: const pw.TextStyle(
                     fontSize: 14,
                   ),
@@ -424,6 +454,14 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
       ..click();
 
     html.Url.revokeObjectUrl(url);
+  }
+
+  void _getReceta() {
+    context.read<RecetaBloc>().add(
+          RecetaShown(
+            idconsulta: widget.idConsulta,
+          ),
+        );
   }
 
   void _getMedicamentos() {

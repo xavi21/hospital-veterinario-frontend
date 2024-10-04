@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:paraiso_canino/factory/client_factory.dart';
+import 'package:paraiso_canino/receta/model/consulta_model.dart';
 import 'package:paraiso_canino/receta/model/medicina_list_model.dart';
 import 'package:paraiso_canino/receta/model/receta_list_model.dart';
 import 'package:paraiso_canino/resources/api_constants.dart';
@@ -12,6 +13,16 @@ class RecetaService {
   RecetaService.withClient(
     this.client,
   );
+
+  Future<ConsultaModel> getConsulta({required int idConsulta}) async {
+    final response = await client.get(
+      getConsultaByIdPath,
+      queryParameters: {
+        'idconsulta': idConsulta,
+      },
+    );
+    return ConsultaModel.fromJson(response.data['data'][0]);
+  }
 
   Future<List<MedicinaListModel>> getMedicinas() async {
     final response = await client.get(

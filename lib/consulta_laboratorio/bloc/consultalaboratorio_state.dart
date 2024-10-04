@@ -6,10 +6,20 @@ class ConsultalaboratorioInitial extends ConsultalaboratorioState {}
 
 class ConsultalaboratorioInProgress extends ConsultalaboratorioState {}
 
+class LaboratorioCreatedSuccess extends ConsultalaboratorioState {}
+
 class ConsultalaboratorioListSuccess extends ConsultalaboratorioState {
   final List<LaboratorioListModel> laboratorios;
 
   ConsultalaboratorioListSuccess({
+    required this.laboratorios,
+  });
+}
+
+class ConsultalaboratorioByConsultaSuccess extends ConsultalaboratorioState {
+  final List<ConsultaLaboratorioModel> laboratorios;
+
+  ConsultalaboratorioByConsultaSuccess({
     required this.laboratorios,
   });
 }

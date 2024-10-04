@@ -7,6 +7,14 @@ abstract class RecetaEvent extends Equatable {
   List<Object> get props => [];
 }
 
+final class RecetaShown extends RecetaEvent {
+  final int idconsulta;
+
+  const RecetaShown({
+    required this.idconsulta,
+  });
+}
+
 final class MedicinasListShown extends RecetaEvent {}
 
 final class DetalleRecetaShown extends RecetaEvent {
@@ -34,6 +42,20 @@ final class DetalleRecetaSaved extends RecetaEvent {
   final String indicaciones;
 
   const DetalleRecetaSaved({
+    required this.cantidad,
+    required this.idReceta,
+    required this.idMedicamento,
+    required this.indicaciones,
+  });
+}
+
+final class DetalleRecetUpdated extends RecetaEvent {
+  final int cantidad;
+  final int idReceta;
+  final int idMedicamento;
+  final String indicaciones;
+
+  const DetalleRecetUpdated({
     required this.cantidad,
     required this.idReceta,
     required this.idMedicamento,

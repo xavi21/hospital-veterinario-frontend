@@ -91,6 +91,13 @@ class _CustomInputState extends State<CustomInput> {
                 width: 1.0,
               ),
             ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(32.0),
+              borderSide: const BorderSide(
+                color: inputBorder,
+                width: 1.0,
+              ),
+            ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(
                 32.0,

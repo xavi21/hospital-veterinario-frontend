@@ -10,6 +10,7 @@ import 'package:paraiso_canino/common/input/custom_input_select.dart';
 import 'package:paraiso_canino/common/input/custom_text_area.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/consulta_laboratorio/bloc/consultalaboratorio_bloc.dart';
+import 'package:paraiso_canino/consulta_laboratorio/model/consulta_laboratorio_model.dart';
 import 'package:paraiso_canino/consulta_laboratorio/model/laboratorio_list_model.dart';
 import 'package:paraiso_canino/resources/colors.dart';
 import 'package:intl/intl.dart';
@@ -36,17 +37,18 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
   final TextEditingController _description = TextEditingController();
 
   List<LaboratorioListModel> _laboratoriosSelectList = [];
+  List<ConsultaLaboratorioModel> _laboratoriosList = [];
 
-  List<LaboratorioListModel> _laboratoriosList = [];
+  late int? _idLaboratorio;
 
   @override
   void initState() {
+    _idLaboratorio = null;
     setState(() {
-      _requestDate.text = DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now());
+      _requestDate.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
     });
-    context.read<ConsultalaboratorioBloc>().add(
-          LaboratorioShown(),
-        );
+    _getLaboratorioByConsulta();
+    _getLaboratorios();
     super.initState();
   }
 
@@ -61,6 +63,19 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
           if (state is ConsultalaboratorioListSuccess) {
             setState(() {
               _laboratoriosSelectList = state.laboratorios;
+            });
+          }
+          if (state is LaboratorioCreatedSuccess) {
+            CustomStateDialog.showAlertDialog(
+              context,
+              title: 'laboratorios',
+              description: 'Laboratorio creado correctamente',
+            );
+            _getLaboratorioByConsulta();
+          }
+          if (state is ConsultalaboratorioByConsultaSuccess) {
+            setState(() {
+              _laboratoriosList = state.laboratorios;
             });
           }
           if (state is ConsultalaboratorioServiceError) {
@@ -161,7 +176,7 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    '${receta.idLaboratorio}',
+                                    '${receta.idlaboratorio}',
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -172,10 +187,10 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
                                   child: Text(receta.descripcion),
                                 ),
                                 Expanded(
-                                  child: Text(receta.fechaSolicitud),
+                                  child: Text(receta.fechasolicitud),
                                 ),
                                 Expanded(
-                                  child: Text(receta.fechaResultado),
+                                  child: Text(receta.fecharesultado),
                                 ),
                                 PopupMenuButton(
                                   color: white,
@@ -188,7 +203,7 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
                                     return const [
                                       PopupMenuItem(
                                         value: TableRowActions.see,
-                                        child: Text('Imprimir'),
+                                        child: Text('Editar'),
                                       ),
                                     ];
                                   },
@@ -233,10 +248,14 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
                 style: Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 20.0),
-              CustomInput(
-                isRequired: true,
-                controller: _resultDate,
-                labelText: 'Fecha resultado',
+              InkWell(
+                onTap: () => _showDateDialog(),
+                child: CustomInput(
+                  isRequired: true,
+                  isEnabled: false,
+                  controller: _resultDate,
+                  labelText: 'Fecha resultado',
+                ),
               ),
               const SizedBox(height: 12.0),
               CustomInputSelect(
@@ -247,7 +266,13 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
                 displayItems: _laboratoriosSelectList
                     .map((laboratorio) => laboratorio.nombre)
                     .toList(),
-                onSelected: (laboratorio) {},
+                onSelected: (String? laboratorio) {
+                  setState(() {
+                    _idLaboratorio = _laboratoriosSelectList
+                        .firstWhere((lab) => lab.nombre == laboratorio)
+                        .idLaboratorio;
+                  });
+                },
                 controller: _labController,
               ),
               const SizedBox(height: 12.0),
@@ -260,17 +285,7 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
               CustomButton(
                 onPressed: () {
                   if (_form.currentState!.validate()) {
-                    setState(() {
-                      _laboratoriosList.add(
-                        LaboratorioListModel(
-                          fechaSolicitud: _requestDate.text,
-                          fechaResultado: _resultDate.text,
-                          idLaboratorio: _laboratoriosList.length + 1,
-                          nombre: _labController.text,
-                          descripcion: _description.text,
-                        ),
-                      );
-                    });
+                    _createLaboratorio();
                     _labController.clear();
                     _description.clear();
                     Navigator.pop(context);
@@ -286,4 +301,72 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
   }
 
   void _generatePdf() {}
+
+  void _createLaboratorio() {
+    context.read<ConsultalaboratorioBloc>().add(
+          LaboratorioCreated(
+            idconsulta: widget.idConsulta,
+            idlaboratorio: _idLaboratorio!,
+            resultado: _description.text,
+            fechasolicitud: _requestDate.text,
+            fecharesultado: _resultDate.text,
+          ),
+        );
+  }
+
+  void _getLaboratorioByConsulta() {
+    context.read<ConsultalaboratorioBloc>().add(
+          LaboratorioByConsultaShown(
+            idConsulta: widget.idConsulta,
+          ),
+        );
+  }
+
+  void _getLaboratorios() {
+    context.read<ConsultalaboratorioBloc>().add(
+          LaboratorioShown(),
+        );
+  }
+
+  void _showDateDialog() async {
+    final currentDate = DateTime.now();
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: currentDate,
+      firstDate: currentDate,
+      lastDate: DateTime(
+        currentDate.year + 10,
+        currentDate.month,
+        currentDate.day,
+      ),
+      helpText: 'Selecciona la fecha ',
+      confirmText: 'Confirmar',
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: lightBlue,
+              onPrimary: darkBlue,
+              onSurface: darkBlue,
+              secondary: darkBlue,
+              brightness: Brightness.light,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: darkBlue,
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+      setState(() {
+        _resultDate.text = formattedDate;
+      });
+    }
+  }
 }

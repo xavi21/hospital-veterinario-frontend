@@ -6,6 +6,14 @@ final class RecetaInitial extends RecetaState {}
 
 final class RecetaInProgress extends RecetaState {}
 
+final class ConsultaSuccess extends RecetaState {
+  final ConsultaModel consulta;
+
+  ConsultaSuccess({
+    required this.consulta,
+  });
+}
+
 final class RecetaMedicinasListSuccess extends RecetaState {
   final List<MedicinaListModel> medicinas;
   RecetaMedicinasListSuccess({

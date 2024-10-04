@@ -4,6 +4,7 @@ import 'package:paraiso_canino/cita/cita_page.dart';
 import 'package:paraiso_canino/color/color_page.dart';
 import 'package:paraiso_canino/consulta/consulta_page.dart';
 import 'package:paraiso_canino/empleado/empleado_page.dart';
+import 'package:paraiso_canino/hospitalizacion/hospitalizacion_page.dart';
 import 'package:paraiso_canino/jaula/jaula_page.dart';
 import 'package:paraiso_canino/laboratorio/laboratorio_page.dart';
 import 'package:paraiso_canino/persona/persona_page.dart';
@@ -23,18 +24,18 @@ final Map<String, Widget> routes = {
   'Sucursal': const SucursalPage(),
   'StatusUsuario': const StatusUsuarioPage(),
   'StatusEmpleado': const StatusEmpleadoPage(),
-  'Ambulancia': const AmbulanciaPage(), //1
+  'Ambulancia': const AmbulanciaPage(),
   'Talla': const TallaPage(),
   'Jaula': const JaulaPage(),
-  'TipoMascota': Container(), // 2
-  'EstadoCivil': Container(), // 3
-  'TipoDocumento': Container(), //4
-  'Genero': Container(), // 5
+  'TipoMascota': Container(), // 1
+  'EstadoCivil': Container(), // 2
+  'TipoDocumento': Container(), //3
+  'Genero': Container(), // 4
   'Color': const ColorPage(),
-  'EstatusCita': Container(), //6
-  'CasaMedica': Container(), //7
-  'ComponentePrincipal': Container(), //8
-  'TipoMedidaPeso': Container(), //9
+  'EstatusCita': Container(), //5
+  'CasaMedica': Container(), //6
+  'ComponentePrincipal': Container(), //7
+  'TipoMedidaPeso': Container(), //8
   'Laboratorio': const LaboratorioPage(),
   'Menu': const MenuPage(),
   'Opcion': const OpcionesPage(),
@@ -44,9 +45,9 @@ final Map<String, Widget> routes = {
   'Empleado': const EmpleadoPage(),
   'Cita': const CitaPage(),
   'Consulta': const ConsultaPage(),
-  'Receta': Container(), //10
-  'Hospitalización': Container(), //11
-  'Grooming': Container(), //12
-  'Cliente': Container(), //13
-  'Medicamento': Container(), //14
+  'Receta': Container(), //9
+  'Hospitalización': const HospitalizacionPage(),
+  'Grooming': Container(), //10
+  'Cliente': Container(), //11
+  'Medicamento': Container(), //12
 };

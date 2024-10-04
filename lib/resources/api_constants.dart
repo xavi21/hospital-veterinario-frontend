@@ -41,10 +41,13 @@ const String createMascotaPath = 'api/mascota/save';
 const String updateMascotaPath = 'api/mascota/update';
 const String deleteMascotaPath = 'api/mascota/eliminar';
 const String getLaboratoriosPath = 'api/laboratorio/all';
+const String getLaboratoriosByConsultaPath =
+    'api/consultalaboratorio/laboratorioByConsulta';
 const String createLaboratorioPath = 'api/laboratorio/save';
 const String updateLaboratorioPath = 'api/laboratorio/update';
 const String deleteLaboratorioPath = 'api/laboratorio/eliminar';
 const String getConsultasPath = 'api/consulta/all';
+const String getConsultaByIdPath = 'api/receta/medicamentoByConsulta';
 const String createConsultaPath = 'api/consulta/save';
 const String updateConsultaPath = 'api/consulta/update';
 const String deleteConsultaPath = 'api/consulta/eliminar';
@@ -85,3 +88,11 @@ const String getDetalleRecetasByIdPath = 'api/detalleReceta/receta';
 const String createDetalleRecetaPath = 'api/detalleReceta/save';
 const String updateDetalleRecetaPath = 'api/detalleReceta/update';
 const String deleteDetalleRecetaPath = 'api/detalleReceta/eliminar';
+const String getConsultaLaboratoriosByIdPath = 'api/consultalaboratorio/receta';
+const String getConsultaLaboratorioByIdPath =
+    'api/consultalaboratorio/laboratorioByConsulta';
+const String createConsultaLaboratorioPath = 'api/consultalaboratorio/save';
+const String updateConsultaLaboratorioPath = 'api/consultalaboratorio/update';
+const String getHospitalizacionesPath = 'api/hospitalizacion/all';
+const String createHospitalizacionPath = 'api/hospitalizacion/save';
+const String updateHospitalizacionPath = 'api/hospitalizacion/update';
