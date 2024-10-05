@@ -105,7 +105,7 @@ class _HospitalizacionMedicamentoBodyState
         child: Stack(
           children: [
             CustomForm(
-              title: 'Medicamento',
+              title: 'Medicamentos',
               formContent: Column(
                 children: [
                   Row(
