@@ -4,6 +4,7 @@ import 'package:paraiso_canino/cita/cita_page.dart';
 import 'package:paraiso_canino/color/color_page.dart';
 import 'package:paraiso_canino/consulta/consulta_page.dart';
 import 'package:paraiso_canino/empleado/empleado_page.dart';
+import 'package:paraiso_canino/grooming/grooming_page.dart';
 import 'package:paraiso_canino/hospitalizacion/hospitalizacion_page.dart';
 import 'package:paraiso_canino/jaula/jaula_page.dart';
 import 'package:paraiso_canino/laboratorio/laboratorio_page.dart';
@@ -47,7 +48,7 @@ final Map<String, Widget> routes = {
   'Consulta': const ConsultaPage(),
   'Receta': Container(), //9
   'Hospitalización': const HospitalizacionPage(),
-  'Grooming': Container(), //10
+  'Grooming': const GroomingPage(), //10
   'Cliente': Container(), //11
   'Medicamento': Container(), //12
 };

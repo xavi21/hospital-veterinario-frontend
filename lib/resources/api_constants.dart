@@ -110,3 +110,7 @@ const String createHospitalMedicamentoPath =
     'api/hospitalizacionmedicamento/save';
 const String updateHospitalMedicamentoPath =
     'api/hospitalizacionmedicamento/update';
+const String getGroomingsPath = 'api/grooming/all';
+const String createGroomingPath = 'api/grooming/save';
+const String updateGroomingPath = 'api/grooming/update';
+const String deleteGroomingPath = 'api/grooming/eliminar';
