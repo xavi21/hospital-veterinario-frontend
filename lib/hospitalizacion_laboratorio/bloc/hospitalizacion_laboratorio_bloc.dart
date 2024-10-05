@@ -98,7 +98,7 @@ class HospitalizacionLaboratorioBloc extends Bloc<
         idHospitalizacion: event.idhospitalizacion,
       );
       emit(
-        HospitalizacionLaboratorioByConsultaSuccess(laboratorios: resp),
+        LaboratorioByHospitalizacionSuccess(laboratorios: resp),
       );
     } on DioException catch (error) {
       if (error.response?.statusCode == null ||

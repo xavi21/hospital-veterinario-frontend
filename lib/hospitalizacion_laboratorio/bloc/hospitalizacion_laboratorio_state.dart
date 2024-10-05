@@ -19,11 +19,11 @@ class HospitalizacionLaboratorioListSuccess
   });
 }
 
-class HospitalizacionLaboratorioByConsultaSuccess
+class LaboratorioByHospitalizacionSuccess
     extends HospitalizacionLaboratorioState {
   final List<LabHospitalListModel> laboratorios;
 
-  HospitalizacionLaboratorioByConsultaSuccess({
+  LaboratorioByHospitalizacionSuccess({
     required this.laboratorios,
   });
 }

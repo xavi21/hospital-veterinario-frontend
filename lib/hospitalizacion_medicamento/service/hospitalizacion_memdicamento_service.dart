@@ -46,7 +46,7 @@ class HospitalizacionMemdicamentoService {
     required String observaciones,
   }) async {
     return await client.post(
-      createHospitalizacionPath,
+      createHospitalMedicamentoPath,
       data: {
         "idhospitalizacion": idHospitalizacion,
         "idmedicamento": idMedicamento,

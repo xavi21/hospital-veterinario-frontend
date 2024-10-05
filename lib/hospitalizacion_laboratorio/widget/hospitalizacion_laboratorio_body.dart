@@ -49,7 +49,7 @@ class _HospitalizacionLaboratorioBodyState
     setState(() {
       _requestDate.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
     });
-    _getLaboratorioByConsulta();
+    _getLaboratorioByHospitalizacion();
     _getLaboratorios();
     super.initState();
   }
@@ -74,9 +74,9 @@ class _HospitalizacionLaboratorioBodyState
               title: 'laboratorios',
               description: 'Laboratorio creado correctamente',
             );
-            _getLaboratorioByConsulta();
+            _getLaboratorioByHospitalizacion();
           }
-          if (state is HospitalizacionLaboratorioByConsultaSuccess) {
+          if (state is LaboratorioByHospitalizacionSuccess) {
             setState(() {
               _laboratoriosList = state.laboratorios;
             });
@@ -101,7 +101,7 @@ class _HospitalizacionLaboratorioBodyState
         child: Stack(
           children: [
             CustomForm(
-              title: 'Consulta laboratorio',
+              title: 'Hospitalizacion laboratorio',
               formContent: Column(
                 children: [
                   Row(
@@ -317,7 +317,7 @@ class _HospitalizacionLaboratorioBodyState
         );
   }
 
-  void _getLaboratorioByConsulta() {
+  void _getLaboratorioByHospitalizacion() {
     context.read<HospitalizacionLaboratorioBloc>().add(
           LaboratorioByHospitalShown(
             idhospitalizacion: widget.idHospitalizacion,

@@ -47,7 +47,7 @@ class HospitalizacionLaboratorioService {
     required int idHospitalizacion,
   }) async {
     final response = await client.get(
-      getHospitalLaboratoriosPath,
+      getHospitalLaboratorioByIdPath,
       queryParameters: {
         'idhospitalizacion': idHospitalizacion,
       },

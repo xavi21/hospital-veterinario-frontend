@@ -105,7 +105,7 @@ class _HospitalizacionMedicamentoBodyState
         child: Stack(
           children: [
             CustomForm(
-              title: 'Hospitalizacion',
+              title: 'Medicamento',
               formContent: Column(
                 children: [
                   Row(
@@ -136,7 +136,7 @@ class _HospitalizacionMedicamentoBodyState
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       'Medicamento',
-                      'Casa mmedica',
+                      'Casa medica',
                       'Nombre comercial',
                       'observaciones',
                       '',
