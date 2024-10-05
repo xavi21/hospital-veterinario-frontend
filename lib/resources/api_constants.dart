@@ -96,3 +96,17 @@ const String updateConsultaLaboratorioPath = 'api/consultalaboratorio/update';
 const String getHospitalizacionesPath = 'api/hospitalizacion/all';
 const String createHospitalizacionPath = 'api/hospitalizacion/save';
 const String updateHospitalizacionPath = 'api/hospitalizacion/update';
+const String getHospitalLaboratoriosPath = 'api/hospitalizacionlaboratorio/all';
+const String getHospitalLaboratorioByIdPath =
+    'api/hospitalizacionlaboratorio/laboratorioByHospitalizacion';
+const String createHospitalLaboratorioPath =
+    'api/hospitalizacionlaboratorio/save';
+const String updateHospitalLaboratorioPath =
+    'api/hospitalizacionlaboratorio/update';
+const String getHospitalMedicamentosPath = 'api/hospitalizacionmedicamento/all';
+const String getHospitalMedicamentoByIdPath =
+    'api/hospitalizacionmedicamento/medicamentoByHospitalizacion';
+const String createHospitalMedicamentoPath =
+    'api/hospitalizacionmedicamento/save';
+const String updateHospitalMedicamentoPath =
+    'api/hospitalizacionmedicamento/update';

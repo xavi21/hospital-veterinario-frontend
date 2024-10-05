@@ -13,6 +13,8 @@ import 'package:paraiso_canino/detalle_hospitalizacion/bloc/detallehospitalizaci
 import 'package:paraiso_canino/detalle_hospitalizacion/model/jaula_list_model.dart';
 import 'package:paraiso_canino/detalle_hospitalizacion/model/mascota_list_model.dart';
 import 'package:paraiso_canino/hospitalizacion/model/hotpitalizacion_list_model.dart';
+import 'package:paraiso_canino/hospitalizacion_laboratorio/hospitalizacion_laboratorio_page.dart';
+import 'package:paraiso_canino/hospitalizacion_medicamento/hospitalizacion_medicamento_page.dart';
 import 'package:paraiso_canino/resources/colors.dart';
 
 class DetallehospitalizacionBody extends StatefulWidget {
@@ -271,14 +273,14 @@ class _DetallehospitalizacionBodyState
                             children: [
                               CustomButton(
                                 onPressed: () {
-                                  //   Navigator.of(context).push(
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) =>
-                                  //         HospitalizacionLaboratorioPage(
-                                  //       idHospitalizacion: _hospitalizacionId!,
-                                  //     ),
-                                  //   ),
-                                  // )
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          HospitalizacionLaboratorioPage(
+                                        idHospitalizacion: _hospitalizacionId!,
+                                      ),
+                                    ),
+                                  );
                                 },
                                 text: 'Laboratorio',
                               ),
@@ -287,15 +289,16 @@ class _DetallehospitalizacionBodyState
                               ),
                               CustomButton(
                                 onPressed: () {
-                                  //   Navigator.of(context).push(
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => CrearRecetaPage(
-                                  //       idHospitalizacion: _hospitalizacionId!,
-                                  //     ),
-                                  //   ),
-                                  // )
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          HospitalizacionMedicamentoPage(
+                                        idhospitalizacion: _hospitalizacionId!,
+                                      ),
+                                    ),
+                                  );
                                 },
-                                text: 'Medicinas',
+                                text: 'Medicamentos',
                               ),
                             ],
                           )
