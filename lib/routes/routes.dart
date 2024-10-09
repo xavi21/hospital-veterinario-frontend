@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:paraiso_canino/ambulancia/ambulancia_page.dart';
 import 'package:paraiso_canino/cita/cita_page.dart';
+import 'package:paraiso_canino/cliente/cliente_page.dart';
 import 'package:paraiso_canino/color/color_page.dart';
 import 'package:paraiso_canino/consulta/consulta_page.dart';
 import 'package:paraiso_canino/empleado/empleado_page.dart';
+import 'package:paraiso_canino/genero/genero_page.dart';
 import 'package:paraiso_canino/grooming/grooming_page.dart';
 import 'package:paraiso_canino/hospitalizacion/hospitalizacion_page.dart';
 import 'package:paraiso_canino/jaula/jaula_page.dart';
 import 'package:paraiso_canino/laboratorio/laboratorio_page.dart';
+import 'package:paraiso_canino/medicamento/medicamento_page.dart';
 import 'package:paraiso_canino/persona/persona_page.dart';
 import 'package:paraiso_canino/statusEmpleado/status_empleado_page.dart';
 import 'package:paraiso_canino/statusUsuario/status_usuario_page.dart';
@@ -28,10 +31,10 @@ final Map<String, Widget> routes = {
   'Ambulancia': const AmbulanciaPage(),
   'Talla': const TallaPage(),
   'Jaula': const JaulaPage(),
-  'TipoMascota': Container(), // 1
+  'TipoMascota': const TipoMascotaPage(),
   'EstadoCivil': Container(), // 2
   'TipoDocumento': Container(), //3
-  'Genero': Container(), // 4
+  'Genero': const GeneroPage(),
   'Color': const ColorPage(),
   'EstatusCita': Container(), //5
   'CasaMedica': Container(), //6
@@ -48,7 +51,7 @@ final Map<String, Widget> routes = {
   'Consulta': const ConsultaPage(),
   'Receta': Container(), //9
   'Hospitalización': const HospitalizacionPage(),
-  'Grooming': const GroomingPage(), //10
-  'Cliente': Container(), //11
-  'Medicamento': Container(), //12
+  'Grooming': const GroomingPage(),
+  'Cliente': const ClientePage(),
+  'Medicamento': const MedicamentoPage(), //12
 };
