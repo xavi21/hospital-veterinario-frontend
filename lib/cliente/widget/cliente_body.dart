@@ -26,7 +26,7 @@ class _ClienteBodyState extends State<ClienteBody> {
   void initState() {
     clientes = [];
     super.initState();
-    _getClienteList();
+    // _getClienteList();
   }
 
   @override

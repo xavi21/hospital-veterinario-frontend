@@ -16,6 +16,7 @@ import 'package:paraiso_canino/hospitalizacion_medicamento/bloc/hospitalizacionm
 import 'package:paraiso_canino/hospitalizacion_medicamento/model/hospitalizacion_list_model.dart';
 import 'package:paraiso_canino/hospitalizacion_medicamento/model/medicina_list_model.dart';
 import 'package:paraiso_canino/resources/colors.dart';
+import 'package:paraiso_canino/resources/constants.dart';
 
 import 'package:pdf/widgets.dart' as pw;
 
@@ -68,6 +69,7 @@ class _HospitalizacionMedicamentoBodyState
           if (state is MedicinasListSuccess) {
             setState(() {
               _medicamentosList = state.medicinas;
+              _idMedicamento = state.medicinas.first.idmedicamento;
             });
           }
           if (state is HospitalCreatedSuccess) {
@@ -300,6 +302,9 @@ class _HospitalizacionMedicamentoBodyState
 
   Future<void> _generatePDF() async {
     final pdf = pw.Document();
+    final ByteData logoBytes = await rootBundle.load('${imagePath}logo.jpg');
+    final Uint8List imageData = logoBytes.buffer.asUint8List();
+    final pw.ImageProvider logo = pw.MemoryImage(imageData);
 
     pdf.addPage(
       pw.Page(
@@ -309,29 +314,24 @@ class _HospitalizacionMedicamentoBodyState
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
+                pw.Image(logo, height: 130),
+                pw.SizedBox(height: 20),
                 pw.Text(
                   'RECETA MÉDICA',
                   style: pw.TextStyle(
-                    fontSize: 30,
+                    fontSize: 25,
                     fontWeight: pw.FontWeight.bold,
                   ),
+                  textAlign: pw.TextAlign.center,
                 ),
-                pw.SizedBox(height: 20),
-                pw.Text(
-                  'Prescripción:',
-                  style: pw.TextStyle(
-                    fontSize: 18,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.Divider(),
-                pw.SizedBox(height: 16),
+                pw.SizedBox(height: 10),
                 pw.Text(
                   'Fecha: ${DateTime.now().toLocal().toString().split(' ')[0]}',
                   style: const pw.TextStyle(
                     fontSize: 14,
                   ),
                 ),
+                pw.SizedBox(height: 10),
                 pw.Divider(),
                 pw.SizedBox(height: 20),
                 pw.Text(
@@ -341,13 +341,13 @@ class _HospitalizacionMedicamentoBodyState
                     fontWeight: pw.FontWeight.bold,
                   ),
                 ),
+                pw.SizedBox(height: 20),
                 pw.ListView.builder(
                   itemCount: _hospitalizacionsList.length,
                   itemBuilder: (context, index) {
                     return pw.Bullet(
-                      text: '${_hospitalizacionsList[index].nombre}-'
-                          '${_hospitalizacionsList[index].nombreComponentePrincipal},'
-                          '${_hospitalizacionsList[index].observaciones}',
+                      text: '${_hospitalizacionsList[index].nombre} - '
+                          '${_hospitalizacionsList[index].nombreComponentePrincipal}',
                     );
                   },
                 ),
@@ -355,13 +355,18 @@ class _HospitalizacionMedicamentoBodyState
                 pw.Text(
                   'Observaciones:',
                   style: pw.TextStyle(
-                    fontSize: 14,
+                    fontSize: 18,
                     fontWeight: pw.FontWeight.bold,
                   ),
                 ),
-                pw.Text(
-                  _observacionesController.text,
-                  style: const pw.TextStyle(fontSize: 16),
+                pw.SizedBox(height: 20),
+                pw.ListView.builder(
+                  itemBuilder: (context, index) {
+                    return pw.Bullet(
+                      text: _hospitalizacionsList[index].observaciones,
+                    );
+                  },
+                  itemCount: _hospitalizacionsList.length,
                 ),
                 pw.SizedBox(height: 40),
                 pw.Text(

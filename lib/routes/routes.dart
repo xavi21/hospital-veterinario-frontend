@@ -53,5 +53,5 @@ final Map<String, Widget> routes = {
   'Hospitalización': const HospitalizacionPage(),
   'Grooming': const GroomingPage(),
   'Cliente': const ClientePage(),
-  'Medicamento': const MedicamentoPage(), //12
+  'Medicamento': const MedicamentoPage(),
 };

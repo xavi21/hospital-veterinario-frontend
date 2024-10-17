@@ -2,6 +2,7 @@ import 'dart:html' as html;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
 import 'package:paraiso_canino/common/button/custom_button.dart';
@@ -358,6 +359,9 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
 
   Future<void> _generatePDF() async {
     final pdf = pw.Document();
+    final ByteData logoBytes = await rootBundle.load('${imagePath}logo.jpg');
+    final Uint8List imageData = logoBytes.buffer.asUint8List();
+    final pw.ImageProvider logo = pw.MemoryImage(imageData);
 
     pdf.addPage(
       pw.Page(
@@ -367,10 +371,12 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
+                pw.Image(logo, width: 100, height: 100),
+                pw.SizedBox(height: 20),
                 pw.Text(
                   'RECETA MÉDICA',
                   style: pw.TextStyle(
-                    fontSize: 30,
+                    fontSize: 25,
                     fontWeight: pw.FontWeight.bold,
                   ),
                 ),
@@ -385,23 +391,17 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
                 pw.Divider(),
                 pw.Text(
                   'Paciente: $_mascota',
-                  style: const pw.TextStyle(
-                    fontSize: 14,
-                  ),
+                  style: const pw.TextStyle(fontSize: 14),
                 ),
-                pw.SizedBox(height: 16),
+                pw.SizedBox(height: 5.0),
                 pw.Text(
                   'Doctor: $_medico',
-                  style: const pw.TextStyle(
-                    fontSize: 14,
-                  ),
+                  style: const pw.TextStyle(fontSize: 14),
                 ),
-                pw.SizedBox(height: 16),
+                pw.SizedBox(height: 5.0),
                 pw.Text(
                   'Fecha: ${DateTime.now().toLocal().toString().split(' ')[0]}',
-                  style: const pw.TextStyle(
-                    fontSize: 14,
-                  ),
+                  style: const pw.TextStyle(fontSize: 14),
                 ),
                 pw.Divider(),
                 pw.SizedBox(height: 20),
@@ -412,12 +412,13 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
                     fontWeight: pw.FontWeight.bold,
                   ),
                 ),
+                pw.SizedBox(height: 10),
                 pw.ListView.builder(
                   itemCount: _recetasList.length,
                   itemBuilder: (context, index) {
                     return pw.Bullet(
-                      text: '${_recetasList[index].cantidad}-'
-                          '${_recetasList[index].nombreMedicamento},'
+                      text: '${_recetasList[index].cantidad} - '
+                          '${_recetasList[index].nombreMedicamento}, '
                           '${_recetasList[index].indicaciones}',
                     );
                   },
@@ -430,9 +431,14 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
                     fontWeight: pw.FontWeight.bold,
                   ),
                 ),
-                pw.Text(
-                  _observacionesController.text,
-                  style: const pw.TextStyle(fontSize: 16),
+                pw.SizedBox(height: 10),
+                pw.ListView.builder(
+                  itemCount: _recetasList.length,
+                  itemBuilder: (context, index) {
+                    return pw.Bullet(
+                      text: _recetasList[index].indicaciones,
+                    );
+                  },
                 ),
                 pw.SizedBox(height: 40),
                 pw.Text(
@@ -441,11 +447,10 @@ class _CrearRecetaBodyState extends State<CrearRecetaBody> {
                 ),
               ],
             ),
-          ); // Center
+          );
         },
       ),
     );
-
     final Uint8List bytes = await pdf.save();
     final blob = html.Blob([bytes], 'application/pdf');
     final url = html.Url.createObjectUrlFromBlob(blob);

@@ -4,7 +4,6 @@ import 'package:paraiso_canino/common/bloc/base_state.dart';
 import 'package:paraiso_canino/common/button/custom_button.dart';
 import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
 import 'package:paraiso_canino/common/enum/action_emum.dart';
-import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/input/custom_input_select.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
@@ -27,13 +26,14 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final TextEditingController _idMenuController = TextEditingController();
   final TextEditingController _idOpcionController = TextEditingController();
-  final TextEditingController _alta = TextEditingController();
-  final TextEditingController _baja = TextEditingController();
-  final TextEditingController _cambio = TextEditingController();
   final TextEditingController _searchUserOption = TextEditingController();
 
   List<OpcionesListModel> _optionsList = [];
   List<MenuModel> _menuList = [];
+
+  bool _alta = false;
+  bool _baja = false;
+  bool _cambio = false;
 
   late List<OpcionUsuarioModel> opcionUsuarioList;
 
@@ -130,9 +130,9 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
                   _isEdit = false;
                   _idMenuController.clear();
                   _idOpcionController.clear();
-                  _alta.clear();
-                  _baja.clear();
-                  _cambio.clear();
+                  _alta = false;
+                  _baja = false;
+                  _cambio = false;
                 });
                 _scaffoldKey.currentState!.openEndDrawer();
               },
@@ -185,21 +185,28 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
                           child: Text(option.idusuario),
                         ),
                         Expanded(
-                          child: Text(
-                            '${option.alta}',
-                            textAlign: TextAlign.center,
+                          child: Icon(
+                            option.alta == 1
+                                ? Icons.check_circle
+                                : Icons.close_rounded,
+                            color: option.alta == 1 ? Colors.green : Colors.red,
                           ),
                         ),
                         Expanded(
-                          child: Text(
-                            '${option.baja}',
-                            textAlign: TextAlign.center,
+                          child: Icon(
+                            option.baja == 1
+                                ? Icons.check_circle
+                                : Icons.close_rounded,
+                            color: option.baja == 1 ? Colors.green : Colors.red,
                           ),
                         ),
                         Expanded(
-                          child: Text(
-                            '${option.cambio}',
-                            textAlign: TextAlign.center,
+                          child: Icon(
+                            option.cambio == 1
+                                ? Icons.check_circle
+                                : Icons.close_rounded,
+                            color:
+                                option.cambio == 1 ? Colors.green : Colors.red,
                           ),
                         ),
                         PopupMenuButton(
@@ -219,9 +226,9 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
                                 _idOpcion = option.idopcion.toString();
                                 _idMenuController.text = option.menuNombre;
                                 _idOpcionController.text = option.opcionNombre;
-                                _alta.text = option.alta.toString();
-                                _baja.text = option.baja.toString();
-                                _cambio.text = option.cambio.toString();
+                                _alta = option.alta == 1;
+                                _baja = option.baja == 1;
+                                _cambio = option.cambio == 1;
                               });
                               _scaffoldKey.currentState!.openEndDrawer();
                             }
@@ -312,25 +319,28 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
                 controller: _idOpcionController,
               ),
               const SizedBox(height: 12.0),
-              CustomInput(
-                labelText: 'Alta',
-                controller: _alta,
-                textInputType: TextInputType.number,
-                isRequired: true,
+              const Text('Alta'),
+              Switch.adaptive(
+                value: _alta,
+                activeColor: Colors.green,
+                inactiveTrackColor: Colors.grey,
+                onChanged: (bool value) => setState(() => _alta = value),
               ),
               const SizedBox(height: 12.0),
-              CustomInput(
-                labelText: 'Baja',
-                controller: _baja,
-                textInputType: TextInputType.number,
-                isRequired: true,
+              const Text('Baja'),
+              Switch.adaptive(
+                value: _baja,
+                activeColor: Colors.green,
+                inactiveTrackColor: Colors.grey,
+                onChanged: (bool value) => setState(() => _baja = value),
               ),
               const SizedBox(height: 12.0),
-              CustomInput(
-                labelText: 'Cambio',
-                controller: _cambio,
-                textInputType: TextInputType.number,
-                isRequired: true,
+              const Text('Cambio'),
+              Switch.adaptive(
+                value: _cambio,
+                activeColor: Colors.green,
+                inactiveTrackColor: Colors.grey,
+                onChanged: (bool value) => setState(() => _cambio = value),
               ),
               const SizedBox(height: 12.0),
               CustomButton(
@@ -394,9 +404,9 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
             idUsuario: _idUsuario,
             idMenu: int.parse(_idMenu),
             idOpcion: int.parse(_idOpcion),
-            alta: int.parse(_alta.text),
-            baja: int.parse(_baja.text),
-            cambio: int.parse(_cambio.text),
+            alta: _alta ? 1 : 0,
+            baja: _baja ? 1 : 0,
+            cambio: _cambio ? 1 : 0,
           ),
         );
   }
@@ -421,9 +431,9 @@ class _OpcionUsuarioBodyState extends State<OpcionUsuarioBody> {
             idUsuario: _idUsuario,
             idMenu: int.parse(_idMenu),
             idOpcion: int.parse(_idOpcion),
-            alta: int.parse(_alta.text),
-            baja: int.parse(_baja.text),
-            cambio: int.parse(_cambio.text),
+            alta: _alta ? 1 : 0,
+            baja: _baja ? 1 : 0,
+            cambio: _cambio ? 1 : 0,
           ),
         );
   }
