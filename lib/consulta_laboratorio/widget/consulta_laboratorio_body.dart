@@ -1,9 +1,12 @@
+import 'dart:html' as html;
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
 import 'package:paraiso_canino/common/button/custom_button.dart';
 import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
-import 'package:paraiso_canino/common/enum/action_emum.dart';
 import 'package:paraiso_canino/common/form/custom_form.dart';
 import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/input/custom_input_select.dart';
@@ -14,6 +17,9 @@ import 'package:paraiso_canino/consulta_laboratorio/model/consulta_laboratorio_m
 import 'package:paraiso_canino/consulta_laboratorio/model/laboratorio_list_model.dart';
 import 'package:paraiso_canino/resources/colors.dart';
 import 'package:intl/intl.dart';
+import 'package:paraiso_canino/resources/constants.dart';
+
+import 'package:pdf/widgets.dart' as pw;
 
 class ConsultaLaboratorioBody extends StatefulWidget {
   final int idConsulta;
@@ -120,6 +126,17 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
                         child: SizedBox(
                           width: 90.0,
                           child: CustomButton(
+                              onPressed: () => _generatePDF(),
+                              text: 'Generar PDF'),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10.0,
+                      ),
+                      Expanded(
+                        child: SizedBox(
+                          width: 90.0,
+                          child: CustomButton(
                             onPressed: () =>
                                 _scaffoldKey.currentState!.openEndDrawer(),
                             text: 'Agregar',
@@ -192,22 +209,6 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
                                 Expanded(
                                   child: Text(receta.fecharesultado),
                                 ),
-                                PopupMenuButton(
-                                  color: white,
-                                  onSelected: (value) {
-                                    if (value == TableRowActions.see) {
-                                      _generatePdf();
-                                    }
-                                  },
-                                  itemBuilder: (context) {
-                                    return const [
-                                      PopupMenuItem(
-                                        value: TableRowActions.see,
-                                        child: Text('Editar'),
-                                      ),
-                                    ];
-                                  },
-                                )
                               ],
                             ),
                           ),
@@ -300,7 +301,87 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
     );
   }
 
-  void _generatePdf() {}
+  Future<void> _generatePDF() async {
+    final pdf = pw.Document();
+    final ByteData logoBytes = await rootBundle.load('${imagePath}logo.jpg');
+    final Uint8List imageData = logoBytes.buffer.asUint8List();
+    final pw.ImageProvider logo = pw.MemoryImage(imageData);
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Padding(
+            padding: const pw.EdgeInsets.all(16.0),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Image(logo, height: 130),
+                pw.SizedBox(height: 20),
+                pw.Text(
+                  'Examenes de laboratorio',
+                  style: pw.TextStyle(
+                    fontSize: 25,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                  textAlign: pw.TextAlign.center,
+                ),
+                pw.SizedBox(height: 10),
+                pw.SizedBox(height: 10),
+                pw.Divider(),
+                pw.Text(
+                  'Paciente: _______________',
+                  style: const pw.TextStyle(fontSize: 14),
+                ),
+                pw.SizedBox(height: 5.0),
+                pw.Text(
+                  'Doctor: __________________',
+                  style: const pw.TextStyle(fontSize: 14),
+                ),
+                pw.Divider(),
+                pw.SizedBox(height: 5.0),
+                pw.Text(
+                  'Fecha: ${DateTime.now().toLocal().toString().split(' ')[0]}',
+                  style: const pw.TextStyle(fontSize: 14),
+                ),
+                pw.SizedBox(height: 20),
+                pw.Text(
+                  'Laboratorios :',
+                  style: pw.TextStyle(
+                    fontSize: 18,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.SizedBox(height: 20),
+                pw.ListView.builder(
+                  itemCount: _laboratoriosList.length,
+                  itemBuilder: (context, index) {
+                    return pw.Bullet(
+                      text: '${_laboratoriosList[index].nombre} - '
+                          '${_laboratoriosList[index].descripcion}',
+                    );
+                  },
+                ),
+                pw.SizedBox(height: 120),
+                pw.Text(
+                  'Firma: _______________________',
+                  style: const pw.TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+          ); // Center
+        },
+      ),
+    );
+
+    final Uint8List bytes = await pdf.save();
+    final blob = html.Blob([bytes], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    html.AnchorElement(href: url)
+      ..setAttribute('download', 'hospitalizacion_medica.pdf')
+      ..click();
+
+    html.Url.revokeObjectUrl(url);
+  }
 
   void _createLaboratorio() {
     context.read<ConsultalaboratorioBloc>().add(

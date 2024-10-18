@@ -368,7 +368,7 @@ class _HospitalizacionMedicamentoBodyState
                   },
                   itemCount: _hospitalizacionsList.length,
                 ),
-                pw.SizedBox(height: 40),
+                pw.SizedBox(height: 120),
                 pw.Text(
                   'Firma: _______________________',
                   style: const pw.TextStyle(fontSize: 16),
