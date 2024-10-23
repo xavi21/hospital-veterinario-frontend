@@ -54,7 +54,10 @@ class _HomeBodyState extends State<HomeBody> {
                       (element) => SideMenuItem(
                         title: element.opcionNombre,
                         icon: const Icon(Icons.pets),
-                        onTap: (index, _) => _handleSideMenuPages(index),
+                        onTap: (index, _) => _handleSideMenuPages(
+                          index,
+                          element,
+                        ),
                       ),
                     )
                     .toList(),
@@ -176,7 +179,9 @@ class _HomeBodyState extends State<HomeBody> {
     );
   }
 
-  void _handleSideMenuPages(int index) => sideMenu.changePage(index);
+  void _handleSideMenuPages(int index, SubMenuListModel model) {
+    sideMenu.changePage(submenu.indexOf(model));
+  }
 
   void _getNavigationMenu() {
     context.read<HomeBloc>().add(

@@ -14,6 +14,10 @@ final class ClienteSuccess extends ClienteState {
   });
 }
 
+final class ClienteCreatedSuccess extends ClienteState {}
+
+final class ClienteEditedSuccess extends ClienteState {}
+
 final class ClienteDeletedSuccess extends ClienteState {}
 
 final class ClienteError extends ClienteState {

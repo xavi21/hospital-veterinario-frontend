@@ -4,6 +4,7 @@ import 'package:paraiso_canino/cita/cita_page.dart';
 import 'package:paraiso_canino/cliente/cliente_page.dart';
 import 'package:paraiso_canino/color/color_page.dart';
 import 'package:paraiso_canino/consulta/consulta_page.dart';
+import 'package:paraiso_canino/dashboard/dashboard_page.dart';
 import 'package:paraiso_canino/empleado/empleado_page.dart';
 import 'package:paraiso_canino/genero/genero_page.dart';
 import 'package:paraiso_canino/grooming/grooming_page.dart';
@@ -24,6 +25,7 @@ import 'package:paraiso_canino/usuario/usuario_page.dart';
 
 final Map<String, Widget> routes = {
   '': Container(),
+  'Dashboard': const DashboardPage(),
   'Usuario': const UsuarioPage(),
   'Sucursal': const SucursalPage(),
   'StatusUsuario': const StatusUsuarioPage(),
@@ -32,14 +34,14 @@ final Map<String, Widget> routes = {
   'Talla': const TallaPage(),
   'Jaula': const JaulaPage(),
   'TipoMascota': const TipoMascotaPage(),
-  'EstadoCivil': Container(), // 2
-  'TipoDocumento': Container(), //3
+  'EstadoCivil': Container(),
+  'TipoDocumento': Container(),
   'Genero': const GeneroPage(),
   'Color': const ColorPage(),
-  'EstatusCita': Container(), //5
-  'CasaMedica': Container(), //6
-  'ComponentePrincipal': Container(), //7
-  'TipoMedidaPeso': Container(), //8
+  'EstatusCita': Container(),
+  'CasaMedica': Container(),
+  'ComponentePrincipal': Container(),
+  'TipoMedidaPeso': Container(),
   'Laboratorio': const LaboratorioPage(),
   'Menu': const MenuPage(),
   'Opcion': const OpcionesPage(),
@@ -49,7 +51,7 @@ final Map<String, Widget> routes = {
   'Empleado': const EmpleadoPage(),
   'Cita': const CitaPage(),
   'Consulta': const ConsultaPage(),
-  'Receta': Container(), //9
+  'Receta': Container(),
   'Hospitalización': const HospitalizacionPage(),
   'Grooming': const GroomingPage(),
   'Cliente': const ClientePage(),

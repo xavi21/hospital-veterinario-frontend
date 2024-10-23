@@ -1,53 +1,56 @@
 class ClienteListModel {
-  final int idcita;
   final String usuariomodificacion;
   final String fechamodificacion;
-  final String fechahora;
-  final String nombreMascota;
-  final String motivo;
   final String usuariocreacion;
   final String fechacreacion;
-  final int idcliente;
-  final int idempleado;
-  final String nombreEmpleado;
-  final String apellidoEmpleado;
-  final String sintomas;
-  final String diagnostico;
+  final String fechanacimiento;
+  final String nombreEstadoCivil;
+  final int idGenero;
+  final int idpersona;
+  final String nombreGenero;
+  final String nombre;
+  final String apellido;
+  final String telefono;
+  final String direccion;
+  final String correoelectronico;
+  final int idEstadoCivil;
   bool isHover;
 
   ClienteListModel({
-    required this.idcita,
     required this.usuariomodificacion,
     required this.fechamodificacion,
-    required this.fechahora,
-    required this.nombreMascota,
-    required this.motivo,
     required this.usuariocreacion,
     required this.fechacreacion,
-    required this.idcliente,
-    required this.idempleado,
-    required this.nombreEmpleado,
-    required this.apellidoEmpleado,
-    required this.sintomas,
-    required this.diagnostico,
+    required this.fechanacimiento,
+    required this.nombreEstadoCivil,
+    required this.idGenero,
+    required this.idpersona,
+    required this.nombreGenero,
+    required this.nombre,
+    required this.apellido,
+    required this.telefono,
+    required this.direccion,
+    required this.correoelectronico,
+    required this.idEstadoCivil,
     this.isHover = false,
   });
 
   factory ClienteListModel.fromJson(Map<String, dynamic> json) =>
       ClienteListModel(
-        idcita: json["idcita"],
         usuariomodificacion: json["usuariomodificacion"],
         fechamodificacion: json["fechamodificacion"],
-        fechahora: json["fechahora"],
-        nombreMascota: json["nombre_mascota"],
-        motivo: json["motivo"],
         usuariocreacion: json["usuariocreacion"],
         fechacreacion: json["fechacreacion"],
-        idcliente: json["idcliente"],
-        idempleado: json["idempleado"],
-        nombreEmpleado: json["nombre_empleado"],
-        apellidoEmpleado: json["apellido_empleado"],
-        sintomas: json["sintomas"],
-        diagnostico: json["diagnostico"],
+        fechanacimiento: json["fechanacimiento"],
+        nombreEstadoCivil: json["nombre_estado_civil"],
+        idGenero: json["id_genero"],
+        idpersona: json["idpersona"],
+        nombreGenero: json["nombre_genero"],
+        nombre: json["nombre"],
+        apellido: json["apellido"],
+        telefono: json["telefono"],
+        direccion: json["direccion"],
+        correoelectronico: json["correoelectronico"],
+        idEstadoCivil: json["id_estado_civil"],
       );
 }

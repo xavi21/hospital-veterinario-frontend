@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paraiso_canino/color/model/color_list_model.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
 import 'package:paraiso_canino/common/button/custom_button.dart';
 import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
 import 'package:paraiso_canino/common/enum/action_emum.dart';
 import 'package:paraiso_canino/common/input/custom_input.dart';
+import 'package:paraiso_canino/common/input/custom_input_select.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
+import 'package:paraiso_canino/genero/model/genero_response.dart';
+import 'package:paraiso_canino/persona/model/persona_list_model.dart';
+import 'package:paraiso_canino/talla/model/talla_list_model.dart';
 import 'package:paraiso_canino/tipoMascota/bloc/mascota_bloc.dart';
 import 'package:paraiso_canino/tipoMascota/model/mascota_list_model.dart';
 import 'package:paraiso_canino/resources/colors.dart';
+import 'package:paraiso_canino/tipoMascota/model/tipo_mascota_list_model.dart';
 
 class TipoMascotaBody extends StatefulWidget {
   const TipoMascotaBody({super.key});
@@ -22,18 +28,45 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
+  final TextEditingController _peso = TextEditingController();
+  final TextEditingController _tipoMascotaController = TextEditingController();
+  final TextEditingController _personaController = TextEditingController();
+  final TextEditingController _generoController = TextEditingController();
+  final TextEditingController _colorController = TextEditingController();
+  final TextEditingController _tallaController = TextEditingController();
   final TextEditingController _searchMascotas = TextEditingController();
 
-  late List<TipoMascotaListModel> mascotas;
+  late List<TipoMascotaListModel> tipoMascotas;
+  late List<GeneroListModel> generos;
+  late List<PersonaListModel> personas;
+  late List<ColorListModel> colores;
+  late List<TallaListModel> tallas;
+  late List<MascotaListModel> mascotas;
 
   late bool _isEdit;
+  late int? _tipoMascotaId;
+  late int? _generoId;
+  late int? _personaId;
+  late int? _colorId;
+  late int? _tallaId;
   late int _mascotaId;
 
   @override
   void initState() {
     _isEdit = false;
+    tipoMascotas = [];
+    generos = [];
+    personas = [];
+    colores = [];
+    tallas = [];
     mascotas = [];
+    _tipoMascotaId = null;
+    _generoId = null;
+    _personaId = null;
+    _colorId = null;
+    _tallaId = null;
     super.initState();
+    _getFormLists();
     _getMascotasList();
   }
 
@@ -48,7 +81,42 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
           switch (state.runtimeType) {
             case const (TipoMascotaSuccess):
               final loadedState = state as TipoMascotaSuccess;
-              setState(() => mascotas = loadedState.tipomascotas);
+              setState(() {
+                tipoMascotas = loadedState.tipoMascotas;
+                _tipoMascotaId = loadedState.tipoMascotas.first.idTipoMascota;
+              });
+              break;
+            case const (GeneroSuccess):
+              final loadedState = state as GeneroSuccess;
+              setState(() {
+                generos = loadedState.genero;
+                _generoId = loadedState.genero.first.idGenero;
+              });
+              break;
+            case const (PersonaSuccess):
+              final loadedState = state as PersonaSuccess;
+              setState(() {
+                personas = loadedState.personas;
+                _personaId = loadedState.personas.first.idpersona;
+              });
+              break;
+            case const (ColorSuccess):
+              final loadedState = state as ColorSuccess;
+              setState(() {
+                colores = loadedState.colores;
+                _colorId = loadedState.colores.first.idColor;
+              });
+              break;
+            case const (TallaSuccess):
+              final loadedState = state as TallaSuccess;
+              setState(() {
+                tallas = loadedState.tallas;
+                _tallaId = loadedState.tallas.first.idTalla;
+              });
+              break;
+            case const (MascotaSuccess):
+              final loadedState = state as MascotaSuccess;
+              setState(() => mascotas = loadedState.mascotas);
               break;
             case const (TipoMascotaCreatedSuccess):
               _getMascotasList();
@@ -110,10 +178,12 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
               headers: const [
                 'iD',
                 'Nombre Mascota',
-                'Fecha creación',
-                'Fecha modificación',
-                'Usuario creador',
-                'Usuario modificador',
+                'Nombre propietario',
+                'Tipo de mascota',
+                'Color',
+                'Peso',
+                'Talla',
+                'Genero',
                 '',
               ],
               rows: mascotas.map<Widget>((mascota) {
@@ -137,19 +207,27 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
                           ),
                         ),
                         Expanded(
-                          child: Text(mascota.nombre),
+                          child: Text(mascota.nombreMascota),
                         ),
                         Expanded(
-                          child: Text(mascota.fechacreacion),
+                          child: Text(
+                            '${mascota.nombrePropietario} ${mascota.apellidoPropietario}',
+                          ),
                         ),
                         Expanded(
-                          child: Text(mascota.fechamodificacion),
+                          child: Text(mascota.nombreTipoMascota),
                         ),
                         Expanded(
-                          child: Text(mascota.usuariocreacion),
+                          child: Text(mascota.nombreColor),
                         ),
                         Expanded(
-                          child: Text(mascota.usuariomodificacion),
+                          child: Text('${mascota.peso} LBs'),
+                        ),
+                        Expanded(
+                          child: Text(mascota.nombreTalla),
+                        ),
+                        Expanded(
+                          child: Text(mascota.nombreGenero),
                         ),
                         PopupMenuButton(
                           color: white,
@@ -162,7 +240,7 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
                             if (value == TableRowActions.edit) {
                               setState(() {
                                 _isEdit = true;
-                                _name.text = mascota.nombre;
+                                _name.text = mascota.nombreMascota;
                                 _mascotaId = mascota.idTipoMascota;
                               });
                               _scaffoldKey.currentState!.openEndDrawer();
@@ -174,10 +252,10 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
                                 value: TableRowActions.edit,
                                 child: Text('Editar'),
                               ),
-                              PopupMenuItem(
-                                value: TableRowActions.delete,
-                                child: Text('Eliminar'),
-                              ),
+                              // PopupMenuItem(
+                              //   value: TableRowActions.delete,
+                              //   child: Text('Eliminar'),
+                              // ),
                             ];
                           },
                         )
@@ -223,6 +301,103 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
                 isRequired: true,
               ),
               const SizedBox(height: 12.0),
+              CustomInput(
+                labelText: 'Peso',
+                controller: _peso,
+                isRequired: true,
+              ),
+              const SizedBox(height: 12.0),
+              CustomInputSelect(
+                title: 'Propietario',
+                hint: 'Selecciona una persona',
+                valueItems: personas
+                    .map<String>((persona) => persona.idpersona.toString())
+                    .toList(),
+                displayItems:
+                    personas.map<String>((persona) => persona.nombre).toList(),
+                onSelected: (String? newPersona) {
+                  setState(() {
+                    _personaId = personas
+                        .firstWhere((persona) => persona.nombre == newPersona)
+                        .idpersona;
+                  });
+                },
+                controller: _personaController,
+              ),
+              const SizedBox(height: 12.0),
+              CustomInputSelect(
+                title: 'Tipo Mascota',
+                hint: 'Selecciona un tipo',
+                valueItems: tipoMascotas
+                    .map<String>((mascota) => mascota.idTipoMascota.toString())
+                    .toList(),
+                displayItems: tipoMascotas
+                    .map<String>((mascota) => mascota.nombre)
+                    .toList(),
+                onSelected: (String? newMascota) {
+                  setState(() {
+                    _tipoMascotaId = tipoMascotas
+                        .firstWhere((mascota) => mascota.nombre == newMascota)
+                        .idTipoMascota;
+                  });
+                },
+                controller: _tipoMascotaController,
+              ),
+              const SizedBox(height: 12.0),
+              CustomInputSelect(
+                title: 'Genero',
+                hint: 'Selecciona un genero',
+                valueItems: generos
+                    .map<String>((genero) => genero.idGenero.toString())
+                    .toList(),
+                displayItems:
+                    generos.map<String>((genero) => genero.nombre).toList(),
+                onSelected: (String? newGenero) {
+                  setState(() {
+                    _generoId = generos
+                        .firstWhere((genero) => genero.nombre == newGenero)
+                        .idGenero;
+                  });
+                },
+                controller: _generoController,
+              ),
+              const SizedBox(height: 12.0),
+              CustomInputSelect(
+                title: 'Color',
+                hint: 'Selecciona un color',
+                valueItems: colores
+                    .map<String>((color) => color.idColor.toString())
+                    .toList(),
+                displayItems:
+                    colores.map<String>((color) => color.nombre).toList(),
+                onSelected: (String? newColor) {
+                  setState(() {
+                    _colorId = colores
+                        .firstWhere((color) => color.nombre == newColor)
+                        .idColor;
+                  });
+                },
+                controller: _colorController,
+              ),
+              const SizedBox(height: 12.0),
+              CustomInputSelect(
+                title: 'Talla',
+                hint: 'Selecciona un talla',
+                valueItems: tallas
+                    .map<String>((talla) => talla.idTalla.toString())
+                    .toList(),
+                displayItems:
+                    tallas.map<String>((talla) => talla.nombre).toList(),
+                onSelected: (String? newTalla) {
+                  setState(() {
+                    _tallaId = tallas
+                        .firstWhere((talla) => talla.nombre == newTalla)
+                        .idTalla;
+                  });
+                },
+                controller: _tallaController,
+              ),
+              const SizedBox(height: 12.0),
               CustomButton(
                 onPressed: () {
                   if (_form.currentState!.validate()) {
@@ -247,12 +422,31 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
     setState(() {
       mascotas = mascotas
           .where(
-            (element) => element.nombre.toLowerCase().contains(
+            (element) => element.nombreMascota.toLowerCase().contains(
                   _searchMascotas.text.toLowerCase(),
                 ),
           )
           .toList();
     });
+  }
+
+  void _getFormLists() {
+    context.read<TipoMascotaBloc>()
+      ..add(
+        TipoMascotaShown(),
+      )
+      ..add(
+        GeneroShown(),
+      )
+      ..add(
+        PersonaShown(),
+      )
+      ..add(
+        ColorShown(),
+      )
+      ..add(
+        TallaShown(),
+      );
   }
 
   void _getMascotasList() {
@@ -264,7 +458,13 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
   void _saveNewMascota() {
     context.read<TipoMascotaBloc>().add(
           MascotaSaved(
+            idTipoMascota: _tipoMascotaId!,
+            idGenero: _generoId!,
+            idPersona: _personaId!,
+            idColor: _colorId!,
+            idTalla: _tallaId!,
             name: _name.text,
+            peso: _peso.text,
           ),
         );
   }
@@ -281,7 +481,13 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
     context.read<TipoMascotaBloc>().add(
           MascotaEdited(
             id: id,
+            idTipoMascota: _tipoMascotaId!,
+            idGenero: _generoId!,
+            idPersona: _personaId!,
+            idColor: _colorId!,
+            idTalla: _tallaId!,
             name: _name.text,
+            peso: _peso.text,
           ),
         );
   }
