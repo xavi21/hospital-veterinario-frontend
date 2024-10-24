@@ -30,14 +30,16 @@ class _DashboardBodyState extends State<DashboardBody> {
   double _totalHospitalizaciones = 0;
 
   final List<Color> _listColors = [
-    const Color(0xFF4A628A),
-    const Color(0xFF7AB2D3),
-    const Color(0xFFB9E5E8),
-    const Color(0xFFDFF2EB),
-    const Color(0xFF4A628A),
-    const Color(0xFF7AB2D3),
-    const Color(0xFFB9E5E8),
-    const Color(0xFFDFF2EB),
+    const Color(0xFF2c37c7),
+    const Color(0xFFf5bd04),
+    const Color(0xFF52b6f2),
+    const Color(0xFF2b71f3),
+    const Color(0xFFbcbcbc),
+    const Color(0xFF2c37c7),
+    const Color(0xFFf5bd04),
+    const Color(0xFF52b6f2),
+    const Color(0xFF2b71f3),
+    const Color(0xFFbcbcbc),
   ];
 
   @override
@@ -123,7 +125,8 @@ class _DashboardBodyState extends State<DashboardBody> {
                                           value: _totalGooming,
                                           title: '$_totalGooming%',
                                           titleStyle: const TextStyle(
-                                            fontSize: 16.0,
+                                            color: white,
+                                            fontSize: 20.0,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -132,7 +135,8 @@ class _DashboardBodyState extends State<DashboardBody> {
                                           value: _totalConsultas,
                                           title: '$_totalConsultas%',
                                           titleStyle: const TextStyle(
-                                            fontSize: 16.0,
+                                            color: white,
+                                            fontSize: 20.0,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -141,7 +145,8 @@ class _DashboardBodyState extends State<DashboardBody> {
                                           value: _totalHospitalizaciones,
                                           title: '$_totalHospitalizaciones%',
                                           titleStyle: const TextStyle(
-                                            fontSize: 16.0,
+                                            color: white,
+                                            fontSize: 20.0,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -226,29 +231,28 @@ class _DashboardBodyState extends State<DashboardBody> {
                                             style: TextStyle(fontSize: 40),
                                           ),
                                           DataTable(
-                                            columns: ['Mascota', 'Sintomas']
-                                                .map(
-                                                  (column) => DataColumn(
-                                                    label: Text(column),
-                                                  ),
-                                                )
-                                                .toList(),
+                                            columns:
+                                                ['Fecha de ingreso', 'Mascota']
+                                                    .map(
+                                                      (column) => DataColumn(
+                                                        label: Text(column),
+                                                      ),
+                                                    )
+                                                    .toList(),
                                             rows: _consultas.map((consulta) {
                                               final index =
                                                   _consultas.indexOf(consulta);
                                               return DataRow(
                                                 cells: [
                                                   DataCell(
-                                                    Indicator(
-                                                      color: getColorForChart(
-                                                          index),
-                                                      text: consulta
-                                                          .nombreMascota,
-                                                      isSquare: true,
+                                                    Text(
+                                                      consulta.fechacreacion,
                                                     ),
                                                   ),
                                                   DataCell(
-                                                    Text(consulta.sintomas),
+                                                    Text(
+                                                      consulta.nombreMascota,
+                                                    ),
                                                   ),
                                                 ],
                                               );
@@ -331,12 +335,8 @@ class _DashboardBodyState extends State<DashboardBody> {
                                               return DataRow(
                                                 cells: [
                                                   DataCell(
-                                                    Indicator(
-                                                      color: getColorForChart(
-                                                          index),
-                                                      text: grooming
-                                                          .nombreMascota,
-                                                      isSquare: true,
+                                                    Text(
+                                                      grooming.nombreMascota,
                                                     ),
                                                   ),
                                                   DataCell(
@@ -418,12 +418,9 @@ class _DashboardBodyState extends State<DashboardBody> {
                                               return DataRow(
                                                 cells: [
                                                   DataCell(
-                                                    Indicator(
-                                                      color: getColorForChart(
-                                                          index),
-                                                      text: hospitalizacion
+                                                    Text(
+                                                      hospitalizacion
                                                           .nombreMascota,
-                                                      isSquare: true,
                                                     ),
                                                   ),
                                                   DataCell(

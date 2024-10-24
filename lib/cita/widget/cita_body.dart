@@ -36,8 +36,8 @@ class _CitaBodyState extends State<CitaBody> {
   late bool _isEdit;
   late int _citaId;
 
-  late String _selectedMascotaId;
-  late String _selectedStatusCitaId;
+  late int _selectedMascotaId;
+  late int _selectedStatusCitaId;
 
   @override
   void initState() {
@@ -252,7 +252,10 @@ class _CitaBodyState extends State<CitaBody> {
                     .toList(),
                 onSelected: (String? mascotaId) {
                   setState(() {
-                    _selectedMascotaId = mascotaId!;
+                    _selectedMascotaId = mascotas
+                        .firstWhere(
+                            (element) => element.nombreMascota == mascotaId)
+                        .idmascota;
                   });
                 },
                 controller: _idMascota,
@@ -268,7 +271,9 @@ class _CitaBodyState extends State<CitaBody> {
                     statusCitas.map<String>((status) => status.nombre).toList(),
                 onSelected: (String? statusId) {
                   setState(() {
-                    _selectedStatusCitaId = statusId!;
+                    _selectedStatusCitaId = statusCitas
+                        .firstWhere((element) => element.nombre == statusId)
+                        .idestatuscita;
                   });
                 },
                 controller: _idStatusCita,
@@ -331,8 +336,8 @@ class _CitaBodyState extends State<CitaBody> {
   void _createNewCita() {
     context.read<CitaBloc>().add(
           CitaSaved(
-            idMascota: int.parse(_selectedMascotaId),
-            idStatusCita: int.parse(_selectedStatusCitaId),
+            idMascota: _selectedMascotaId,
+            idStatusCita: _selectedStatusCitaId,
             motivo: _motivo.text,
           ),
         );
@@ -350,8 +355,8 @@ class _CitaBodyState extends State<CitaBody> {
     context.read<CitaBloc>().add(
           CitaEdited(
             idCita: _citaId,
-            idMascota: int.parse(_selectedMascotaId),
-            idStatusCita: int.parse(_selectedStatusCitaId),
+            idMascota: _selectedMascotaId,
+            idStatusCita: _selectedStatusCitaId,
             motivo: _motivo.text,
           ),
         );
