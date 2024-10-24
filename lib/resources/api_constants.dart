@@ -122,3 +122,12 @@ const String getGenerosPath = 'api/genero/all';
 const String createGeneroPath = 'api/genero/save';
 const String updateGeneroPath = 'api/genero/update';
 const String deleteGeneroPath = 'api/genero/eliminar';
+const String getCasaMedicasPath = 'api/casa-medica/all';
+const String createCasaMedicaPath = 'api/casa-medica/save';
+const String updateCasaMedicaPath = 'api/casa-medica/update';
+const String deleteCasaMedicaPath = 'api/casa-medica/eliminar';
+const String getComponentePrincipalsPath = 'api//componente-principal/all';
+const String createComponentePrincipalPath = 'api//componente-principal/save';
+const String updateComponentePrincipalPath = 'api//componente-principal/update';
+const String deleteComponentePrincipalPath =
+    'api//componente-principal/eliminar';

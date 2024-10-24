@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paraiso_canino/empleado/bloc/empleado_bloc.dart';
 import 'package:paraiso_canino/empleado/widget/empleado_body.dart';
 
 class EmpleadoPage extends StatelessWidget {
@@ -6,6 +8,9 @@ class EmpleadoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const EmpleadoBody();
+    return BlocProvider(
+      create: (context) => EmpleadoBloc(),
+      child: const EmpleadoBody(),
+    );
   }
 }

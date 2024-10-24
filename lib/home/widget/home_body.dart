@@ -43,8 +43,10 @@ class _HomeBodyState extends State<HomeBody> {
       listener: (context, state) {
         if (state is HomeGetMenuSuccess) {
           setState(() {
-            // _userName = state.userEmail;
             submenu = state.subMenu;
+            submenu.sort(
+              (a, b) => a.idmenu.compareTo(b.idmenu),
+            );
             menu = state.menu.map<SideMenuExpansionItem>((menuItem) {
               return SideMenuExpansionItem(
                 title: menuItem.name,
@@ -55,7 +57,6 @@ class _HomeBodyState extends State<HomeBody> {
                         title: element.opcionNombre,
                         icon: const Icon(Icons.pets),
                         onTap: (index, _) => _handleSideMenuPages(
-                          index,
                           element,
                         ),
                       ),
@@ -179,7 +180,7 @@ class _HomeBodyState extends State<HomeBody> {
     );
   }
 
-  void _handleSideMenuPages(int index, SubMenuListModel model) {
+  void _handleSideMenuPages(SubMenuListModel model) {
     sideMenu.changePage(submenu.indexOf(model));
   }
 

@@ -14,6 +14,26 @@ final class MedicamentoSuccess extends MedicamentoState {
   });
 }
 
+final class CasaMedicaSuccess extends MedicamentoState {
+  final List<CasaMedicaListModel> casasMedicas;
+
+  CasaMedicaSuccess({
+    required this.casasMedicas,
+  });
+}
+
+final class ComponentePrincipalSuccess extends MedicamentoState {
+  final List<ComponentePrincipalListModel> componentePrincipal;
+
+  ComponentePrincipalSuccess({
+    required this.componentePrincipal,
+  });
+}
+
+final class MedicamentoCreatedSuccess extends MedicamentoState {}
+
+final class MedicamentoUpdatedSuccess extends MedicamentoState {}
+
 final class MedicamentoDeletedSuccess extends MedicamentoState {}
 
 final class MedicamentoError extends MedicamentoState {
