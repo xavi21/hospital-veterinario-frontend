@@ -241,6 +241,7 @@ class _TipoMascotaBodyState extends State<TipoMascotaBody> {
                               setState(() {
                                 _isEdit = true;
                                 _name.text = mascota.nombreMascota;
+                                _peso.text = mascota.peso.toString();
                                 _mascotaId = mascota.idTipoMascota;
                               });
                               _scaffoldKey.currentState!.openEndDrawer();

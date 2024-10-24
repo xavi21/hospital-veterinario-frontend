@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:paraiso_canino/cliente/bloc/cliente_bloc.dart';
 import 'package:paraiso_canino/cliente/model/cliente_response.dart';
 import 'package:paraiso_canino/common/bloc/base_state.dart';
@@ -194,7 +195,6 @@ class _ClienteBodyState extends State<ClienteBody> {
                             if (value == TableRowActions.edit) {
                               setState(() {
                                 _isEdit = true;
-                                _isEdit = false;
                                 _idpersona.text = cliente.idpersona.toString();
                                 _nombre.text = cliente.nombre;
                                 _apellido.text = cliente.apellido;
@@ -365,9 +365,9 @@ class _ClienteBodyState extends State<ClienteBody> {
   void _editCliente({required int id}) {
     context.read<ClienteBloc>().add(
           ClienteEdited(
-            fechacreacion: '${DateTime.now()}',
+            fechacreacion: DateFormat('yyyy-MM-dd').format(DateTime.now()),
             usuariocreacion: '',
-            fechamodificacion: '${DateTime.now()}',
+            fechamodificacion: DateFormat('yyyy-MM-dd').format(DateTime.now()),
             usuariomodificacion: '',
             idpersona: int.parse(_idpersona.text),
             nombre: _nombre.text,

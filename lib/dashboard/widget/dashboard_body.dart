@@ -25,6 +25,10 @@ class _DashboardBodyState extends State<DashboardBody> {
   List<MascotaListModel> _mascotas = [];
   List<HospitalizacionListModel> _hospitalizaciones = [];
 
+  double _totalGooming = 0;
+  double _totalConsultas = 0;
+  double _totalHospitalizaciones = 0;
+
   final List<Color> _listColors = [
     const Color(0xFF4A628A),
     const Color(0xFF7AB2D3),
@@ -51,11 +55,17 @@ class _DashboardBodyState extends State<DashboardBody> {
           switch (state.runtimeType) {
             case const (DashboardConsultaSuccess):
               final loadedState = state as DashboardConsultaSuccess;
-              setState(() => _consultas = loadedState.consultas);
+              setState(() {
+                _consultas = loadedState.consultas;
+                _totalConsultas = loadedState.consultas.length.toDouble();
+              });
               break;
             case const (DashboardGroomingSuccess):
               final loadedState = state as DashboardGroomingSuccess;
-              setState(() => _groomings = loadedState.groomings);
+              setState(() {
+                _groomings = loadedState.groomings;
+                _totalGooming = loadedState.groomings.length.toDouble();
+              });
               break;
             case const (DashboardMascotaSuccess):
               final loadedState = state as DashboardMascotaSuccess;
@@ -64,7 +74,11 @@ class _DashboardBodyState extends State<DashboardBody> {
             case const (DashboardHospitalizacionSuccess):
               final loadedState = state as DashboardHospitalizacionSuccess;
               setState(
-                () => _hospitalizaciones = loadedState.hospitalizaciones,
+                () {
+                  _hospitalizaciones = loadedState.hospitalizaciones;
+                  _totalHospitalizaciones =
+                      loadedState.hospitalizaciones.length.toDouble();
+                },
               );
               break;
             case const (DashboardServiceError):
@@ -103,20 +117,35 @@ class _DashboardBodyState extends State<DashboardBody> {
                                   aspectRatio: 1,
                                   child: PieChart(
                                     PieChartData(
-                                      sections: _mascotas.map((mascota) {
-                                        final index =
-                                            _mascotas.indexOf(mascota);
-                                        return PieChartSectionData(
-                                          color: _listColors[index],
-                                          value:
-                                              mascota.idTipoMascota.toDouble(),
-                                          title: mascota.nombreMascota,
+                                      sections: [
+                                        PieChartSectionData(
+                                          color: getColorForChart(0),
+                                          value: _totalGooming,
+                                          title: '$_totalGooming%',
                                           titleStyle: const TextStyle(
                                             fontSize: 16.0,
                                             fontWeight: FontWeight.bold,
                                           ),
-                                        );
-                                      }).toList(),
+                                        ),
+                                        PieChartSectionData(
+                                          color: getColorForChart(1),
+                                          value: _totalConsultas,
+                                          title: '$_totalConsultas%',
+                                          titleStyle: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        PieChartSectionData(
+                                          color: getColorForChart(2),
+                                          value: _totalHospitalizaciones,
+                                          title: '$_totalHospitalizaciones%',
+                                          titleStyle: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -127,14 +156,23 @@ class _DashboardBodyState extends State<DashboardBody> {
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: _mascotas.map((mascota) {
-                                  final index = _mascotas.indexOf(mascota);
-                                  return Indicator(
-                                    color: _listColors[index],
-                                    text: mascota.nombreMascota,
+                                children: [
+                                  Indicator(
+                                    color: getColorForChart(0),
+                                    text: 'Groomings',
                                     isSquare: true,
-                                  );
-                                }).toList(),
+                                  ),
+                                  Indicator(
+                                    color: getColorForChart(1),
+                                    text: 'Consultas',
+                                    isSquare: true,
+                                  ),
+                                  Indicator(
+                                    color: getColorForChart(2),
+                                    text: 'Hospitalizaciones',
+                                    isSquare: true,
+                                  )
+                                ],
                               )
                             ],
                           ),
@@ -149,25 +187,30 @@ class _DashboardBodyState extends State<DashboardBody> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: AspectRatio(
-                                      aspectRatio: 1,
-                                      child: PieChart(
-                                        PieChartData(
-                                          sections: _consultas.map((consulta) {
-                                            final index =
-                                                _consultas.indexOf(consulta);
-                                            return PieChartSectionData(
-                                              color: _listColors[index],
-                                              value: consulta.idconsulta
-                                                  .toDouble(),
-                                              title: consulta.nombreMascota,
-                                              titleStyle: const TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            );
-                                          }).toList(),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: getColorForChart(1),
+                                          width: 40,
                                         ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            '$_totalConsultas',
+                                            style:
+                                                const TextStyle(fontSize: 40),
+                                          ),
+                                          const Text(
+                                            "TOTAL",
+                                            style: TextStyle(fontSize: 25),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -197,7 +240,8 @@ class _DashboardBodyState extends State<DashboardBody> {
                                                 cells: [
                                                   DataCell(
                                                     Indicator(
-                                                      color: _listColors[index],
+                                                      color: getColorForChart(
+                                                          index),
                                                       text: consulta
                                                           .nombreMascota,
                                                       isSquare: true,
@@ -235,24 +279,30 @@ class _DashboardBodyState extends State<DashboardBody> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: AspectRatio(
-                                      aspectRatio: 1,
-                                      child: PieChart(
-                                        PieChartData(
-                                          sections: _groomings.map((grooming) {
-                                            final index =
-                                                _groomings.indexOf(grooming);
-                                            return PieChartSectionData(
-                                              color: _listColors[index],
-                                              value: grooming.idcita.toDouble(),
-                                              title: grooming.nombreMascota,
-                                              titleStyle: const TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            );
-                                          }).toList(),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: getColorForChart(0),
+                                          width: 40,
                                         ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            '$_totalGooming',
+                                            style:
+                                                const TextStyle(fontSize: 40),
+                                          ),
+                                          const Text(
+                                            "TOTAL",
+                                            style: TextStyle(fontSize: 25),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -282,7 +332,8 @@ class _DashboardBodyState extends State<DashboardBody> {
                                                 cells: [
                                                   DataCell(
                                                     Indicator(
-                                                      color: _listColors[index],
+                                                      color: getColorForChart(
+                                                          index),
                                                       text: grooming
                                                           .nombreMascota,
                                                       isSquare: true,
@@ -314,28 +365,30 @@ class _DashboardBodyState extends State<DashboardBody> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: AspectRatio(
-                                      aspectRatio: 1,
-                                      child: PieChart(
-                                        PieChartData(
-                                          sections: _hospitalizaciones
-                                              .map((hospitalizacion) {
-                                            final index = _hospitalizaciones
-                                                .indexOf(hospitalizacion);
-                                            return PieChartSectionData(
-                                              color: _listColors[index],
-                                              value: hospitalizacion
-                                                  .idhospitalizacion
-                                                  .toDouble(),
-                                              title:
-                                                  hospitalizacion.nombreMascota,
-                                              titleStyle: const TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            );
-                                          }).toList(),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: getColorForChart(2),
+                                          width: 40,
                                         ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            '$_totalHospitalizaciones',
+                                            style:
+                                                const TextStyle(fontSize: 40),
+                                          ),
+                                          const Text(
+                                            "TOTAL",
+                                            style: TextStyle(fontSize: 25),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -366,7 +419,8 @@ class _DashboardBodyState extends State<DashboardBody> {
                                                 cells: [
                                                   DataCell(
                                                     Indicator(
-                                                      color: _listColors[index],
+                                                      color: getColorForChart(
+                                                          index),
                                                       text: hospitalizacion
                                                           .nombreMascota,
                                                       isSquare: true,
@@ -423,5 +477,10 @@ class _DashboardBodyState extends State<DashboardBody> {
       ..add(
         HospitalizacionShown(),
       );
+  }
+
+  Color getColorForChart(int index) {
+    int colorIndex = index % _listColors.length;
+    return _listColors[colorIndex];
   }
 }

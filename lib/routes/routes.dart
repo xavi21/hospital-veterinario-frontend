@@ -11,6 +11,7 @@ import 'package:paraiso_canino/grooming/grooming_page.dart';
 import 'package:paraiso_canino/hospitalizacion/hospitalizacion_page.dart';
 import 'package:paraiso_canino/jaula/jaula_page.dart';
 import 'package:paraiso_canino/laboratorio/laboratorio_page.dart';
+import 'package:paraiso_canino/mascota/mascota_page.dart';
 import 'package:paraiso_canino/medicamento/medicamento_page.dart';
 import 'package:paraiso_canino/persona/persona_page.dart';
 import 'package:paraiso_canino/statusEmpleado/status_empleado_page.dart';
@@ -33,7 +34,7 @@ final Map<String, Widget> routes = {
   'Ambulancia': const AmbulanciaPage(),
   'Talla': const TallaPage(),
   'Jaula': const JaulaPage(),
-  'TipoMascota': const TipoMascotaPage(),
+  'TipoMascota': const MascotaPage(),
   'EstadoCivil': Container(),
   'TipoDocumento': Container(),
   'Genero': const GeneroPage(),
