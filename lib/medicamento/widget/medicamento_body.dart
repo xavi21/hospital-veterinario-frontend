@@ -6,6 +6,7 @@ import 'package:paraiso_canino/common/dialog/custom_state_dialog.dart';
 import 'package:paraiso_canino/common/enum/action_emum.dart';
 import 'package:paraiso_canino/common/input/custom_input.dart';
 import 'package:paraiso_canino/common/input/custom_input_select.dart';
+import 'package:paraiso_canino/common/input/custom_text_area.dart';
 import 'package:paraiso_canino/common/loader/loader.dart';
 import 'package:paraiso_canino/common/table/custom_table.dart';
 import 'package:paraiso_canino/medicamento/bloc/medicamento_bloc.dart';
@@ -261,7 +262,7 @@ class _MedicamentoBodyState extends State<MedicamentoBody> {
                 isRequired: true,
               ),
               const SizedBox(height: 12.0),
-              CustomInput(
+              CustomTextArea(
                 labelText: 'Descripcion',
                 controller: _description,
                 isRequired: true,
