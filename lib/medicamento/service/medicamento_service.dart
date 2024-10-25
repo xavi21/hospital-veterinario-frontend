@@ -53,7 +53,7 @@ class MedicamentoService {
     required int idCasaMeidca,
     required int idComponentePrincipal,
   }) async {
-    return await client.delete(
+    return await client.post(
       createMedicamentoPath,
       data: {
         "nombre": name,
@@ -71,7 +71,7 @@ class MedicamentoService {
     required int idCasaMeidca,
     required int idComponentePrincipal,
   }) async {
-    return await client.delete(
+    return await client.put(
       updateMedicamentoPath,
       data: {
         "idmedicamento": id,
