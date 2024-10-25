@@ -5,9 +5,13 @@ import 'package:paraiso_canino/hospitalizacion_laboratorio/widget/hospitalizacio
 
 class HospitalizacionLaboratorioPage extends StatelessWidget {
   final int idHospitalizacion;
+  final String doctor;
+  final String mascota;
   const HospitalizacionLaboratorioPage({
     super.key,
     required this.idHospitalizacion,
+    required this.doctor,
+    required this.mascota,
   });
 
   @override
@@ -16,6 +20,8 @@ class HospitalizacionLaboratorioPage extends StatelessWidget {
       create: (context) => HospitalizacionLaboratorioBloc(),
       child: HospitalizacionLaboratorioBody(
         idHospitalizacion: idHospitalizacion,
+        doctor: doctor,
+        mascota: mascota,
       ),
     );
   }

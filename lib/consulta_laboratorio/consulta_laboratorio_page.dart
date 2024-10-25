@@ -5,9 +5,13 @@ import 'package:paraiso_canino/consulta_laboratorio/widget/consulta_laboratorio_
 
 class ConsultaLaboratorioPage extends StatelessWidget {
   final int idConsulta;
+  final String doctor;
+  final String mascota;
   const ConsultaLaboratorioPage({
     super.key,
     required this.idConsulta,
+    required this.doctor,
+    required this.mascota,
   });
 
   @override
@@ -16,6 +20,8 @@ class ConsultaLaboratorioPage extends StatelessWidget {
       create: (context) => ConsultalaboratorioBloc(),
       child: ConsultaLaboratorioBody(
         idConsulta: idConsulta,
+        doctor: doctor,
+        mascota: mascota,
       ),
     );
   }

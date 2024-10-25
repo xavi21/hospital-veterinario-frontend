@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:paraiso_canino/ambulancia/bloc/ambulancia_bloc.dart';
@@ -353,7 +356,34 @@ class _AmbulanciaBodyState extends State<AmbulanciaBody> {
         );
   }
 
-  void _showGoogleMapLocation() {
+  Future<String> _getEncodeImage(String imageName) async {
+    final ByteData bytes = await rootBundle.load('$imagePath$imageName');
+    final Uint8List buffer = bytes.buffer.asUint8List();
+    final String base64String = base64Encode(buffer);
+    return base64String;
+  }
+
+  void _showGoogleMapLocation() async {
+    String enable = await _getEncodeImage('ambulance.png');
+    String disable = await _getEncodeImage('ambulance_disable.png');
+
+    String? iconDataUrl;
+    String? iconDataUrlDisable;
+
+    setState(() {
+      iconDataUrl = 'data:image/png;base64,$enable';
+      iconDataUrlDisable = 'data:image/png;base64,$disable';
+    });
+    _showDialog(
+      enableURL: iconDataUrl,
+      disableURL: iconDataUrlDisable,
+    );
+  }
+
+  void _showDialog({
+    String? enableURL,
+    String? disableURL,
+  }) {
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -384,6 +414,8 @@ class _AmbulanciaBodyState extends State<AmbulanciaBody> {
               flex: 8,
               child: GoogleMaps(
                 ambulancias: ambulancias,
+                iconDataUrl: enableURL,
+                iconDataUrlDisable: disableURL,
               ),
             ),
           ],

@@ -278,6 +278,9 @@ class _DetallehospitalizacionBodyState
                                       builder: (context) =>
                                           HospitalizacionLaboratorioPage(
                                         idHospitalizacion: _hospitalizacionId!,
+                                        doctor: widget.arguments!.motivo,
+                                        mascota:
+                                            widget.arguments!.nombreMascota,
                                       ),
                                     ),
                                   );

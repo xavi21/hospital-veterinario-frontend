@@ -207,6 +207,8 @@ class _DetalleConsultaBodyState extends State<DetalleConsultaBody> {
                                 MaterialPageRoute(
                                   builder: (context) => ConsultaLaboratorioPage(
                                     idConsulta: _consultaId!,
+                                    doctor: widget.arguments!.nombreEmpleado,
+                                    mascota: widget.arguments!.nombreMascota,
                                   ),
                                 ),
                               ),

@@ -24,9 +24,13 @@ import 'package:pdf/widgets.dart' as pw;
 
 class HospitalizacionLaboratorioBody extends StatefulWidget {
   final int idHospitalizacion;
+  final String doctor;
+  final String mascota;
   const HospitalizacionLaboratorioBody({
     super.key,
     required this.idHospitalizacion,
+    required this.doctor,
+    required this.mascota,
   });
 
   @override
@@ -332,12 +336,12 @@ class _HospitalizacionLaboratorioBodyState
                 pw.SizedBox(height: 10),
                 pw.Divider(),
                 pw.Text(
-                  'Paciente: _______________',
+                  'Paciente: ${widget.mascota}',
                   style: const pw.TextStyle(fontSize: 14),
                 ),
                 pw.SizedBox(height: 5.0),
                 pw.Text(
-                  'Doctor: __________________',
+                  'motivo: ${widget.doctor}',
                   style: const pw.TextStyle(fontSize: 14),
                 ),
                 pw.Divider(),
