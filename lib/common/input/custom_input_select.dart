@@ -41,14 +41,19 @@ class CustomInputSelect extends StatelessWidget {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownMenu<String>(
-              initialSelection: selectedValue,
+              initialSelection:
+                  displayItems.contains(selectedValue) ? selectedValue : null,
               controller: controller,
               requestFocusOnTap: true,
               hintText: hint,
               width: width,
-              enableSearch: true,
-              enableFilter: true,
-              onSelected: onSelected,
+              enableSearch: false,
+              enableFilter: false,
+              onSelected: (value) {
+                if (displayItems.contains(value)) {
+                  onSelected(value);
+                }
+              },
               dropdownMenuEntries: displayItems
                   .map((element) => DropdownMenuEntry<String>(
                         value: element,
