@@ -140,7 +140,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
   }
 
   void _startUpdatingMarkers() {
-    _timer = Timer.periodic(const Duration(minutes: 3), (timer) {
+    _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
       _addMarkers(); // Actualizar marcadores en el mapa
     });
   }
