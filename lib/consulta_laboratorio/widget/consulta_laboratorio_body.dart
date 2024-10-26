@@ -338,7 +338,7 @@ class _ConsultaLaboratorioBodyState extends State<ConsultaLaboratorioBody> {
                 ),
                 pw.SizedBox(height: 5.0),
                 pw.Text(
-                  'Doctor: ${widget.mascota}',
+                  'Doctor: ${widget.doctor}',
                   style: const pw.TextStyle(fontSize: 14),
                 ),
                 pw.Divider(),
