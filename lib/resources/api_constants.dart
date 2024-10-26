@@ -131,3 +131,4 @@ const String createComponentePrincipalPath = 'api//componente-principal/save';
 const String updateComponentePrincipalPath = 'api//componente-principal/update';
 const String deleteComponentePrincipalPath =
     'api//componente-principal/eliminar';
+const String getUsuariosPath = 'api/auth/all';
